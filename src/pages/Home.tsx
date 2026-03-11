@@ -244,18 +244,10 @@ export default function Home() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-20 pb-32 px-6 overflow-hidden">
-        {/* Video Background */}
+        {/* Background Gradient */}
         <div className="absolute inset-0 z-0">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover opacity-60"
-          >
-            <source src="/hero_verkehrsrecht.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-900/50 to-slate-800/70" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(20,184,166,0.15),transparent_50%)]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/60 to-slate-800/80" />
         </div>
 
         {/* Animated Grid Pattern */}
@@ -348,7 +340,7 @@ export default function Home() {
                 className="group relative h-[400px] rounded-3xl overflow-hidden shadow-xl"
               >
                 <img
-                  src="/hero_verkehrsrecht.avif"
+                  src="/hero_verkehrsrecht.jpeg"
                   alt="Verkehrsrecht"
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />

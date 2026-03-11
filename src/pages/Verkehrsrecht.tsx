@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion } from 'motion/react';
 import {
   Car,
@@ -24,6 +24,23 @@ import { Link } from 'react-router-dom';
 
 export default function Verkehrsrecht() {
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll carousel
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    const interval = setInterval(() => {
+      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+      if (carousel.scrollLeft >= maxScroll - 10) {
+        carousel.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        carousel.scrollBy({ left: 420, behavior: 'smooth' });
+      }
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const scroll = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -130,11 +147,11 @@ export default function Verkehrsrecht() {
             muted
             loop
             playsInline
-            className="w-full h-full object-cover opacity-50"
+            className="w-full h-full object-cover opacity-40"
           >
             <source src="/hero_verkehrsrecht.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/60 to-slate-800/80" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-900/70 to-slate-800/90" />
         </div>
 
         {/* Grid Pattern Overlay */}

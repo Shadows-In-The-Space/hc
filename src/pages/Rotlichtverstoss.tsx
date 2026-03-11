@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import {
-  Traffic,
+  CircleDot,
   ArrowRight,
   CheckCircle2,
   AlertTriangle,
@@ -35,7 +35,7 @@ export default function Rotlichtverstoss() {
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-red-300 text-xs font-bold mb-8">
-            <Traffic size={14} /> VERKEHRSRECHT
+            <CircleDot size={14} /> VERKEHRSRECHT
           </motion.div>
 
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
