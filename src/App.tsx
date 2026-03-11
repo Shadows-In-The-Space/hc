@@ -26,6 +26,7 @@ import Impressum from './pages/Impressum';
 import Datenschutz from './pages/Datenschutz';
 import Jobs from './pages/Jobs';
 import Presse from './pages/Presse';
+import Article from './pages/Article';
 
 // --- Shared Components ---
 
@@ -166,6 +167,7 @@ const AppContent: React.FC = () => {
         <Route path="/verkehrsrecht" element={<Verkehrsrecht />} />
         <Route path="/datenskandal" element={<Datenskandal />} />
         <Route path="/ratgeber" element={<Ratgeber />} />
+        <Route path="/ratgeber/:slug" element={<Article />} />
         <Route path="/facebook-datenleck" element={<FacebookDatenleck />} />
         <Route path="/linkedin-datenleck" element={<LinkedInDatenleck />} />
         <Route path="/deezer-datenleck" element={<DeezerDatenleck />} />

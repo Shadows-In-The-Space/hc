@@ -1,0 +1,14 @@
+# robots.txt für HelpCheck
+# https://www.helpcheck.de
+
+User-agent: *
+Allow: /
+
+# Disallow admin/private areas
+Disallow: /api/
+Disallow: /admin/
+Disallow: /*.json$
+Disallow: /*.xml$
+
+# Sitemap
+Sitemap: https://www.helpcheck.de/sitemap.xml

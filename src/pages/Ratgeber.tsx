@@ -3,109 +3,161 @@ import { motion } from 'motion/react';
 import {
   BookOpen,
   ArrowRight,
-  CheckCircle2,
-  Clock,
-  Users,
   Shield,
-  ChevronRight,
-  Search,
-  Calendar,
-  ThumbsUp,
-  AlertCircle
+  AlertTriangle,
+  Car,
+  Smartphone,
+  MapPin,
+  Users,
+  FileText,
+  ChevronRight
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ArticleCard from '../components/ArticleCard';
+
+export const verkehrsrechtArticles = [
+  {
+    slug: 'bussgeldbescheid-anfechten',
+    title: 'Bußgeldbescheid anfechten',
+    excerpt: 'Wann sich ein Einspruch lohnt, welche Fristen gelten und wie Sie vorgehen sollten.',
+    category: 'Bußgeldverfahren',
+    readTime: '6 Min.',
+    icon: FileText
+  },
+  {
+    slug: 'geblitzt-innerorts',
+    title: 'Geblitzt innerorts – Bußgelder & Fahrverbote',
+    excerpt: 'Die Strafen bei Geschwindigkeitsüberschreitungen im Ort.',
+    category: 'Geschwindigkeit',
+    readTime: '5 Min.',
+    icon: Car
+  },
+  {
+    slug: 'bei-rot-geblitzt',
+    title: 'Bei Rot geblitzt – So reagieren Sie richtig',
+    excerpt: 'Was tun, wenn Sie bei Rot über die Ampel fahren?',
+    category: 'Rotlicht',
+    readTime: '4 Min.',
+    icon: AlertTriangle
+  },
+  {
+    slug: 'handy-am-steuer',
+    title: 'Handy am Steuer – Welche Strafen drohen?',
+    excerpt: 'Die Konsequenzen bei Nutzung des Mobiltelefons während der Fahrt.',
+    category: 'Handy',
+    readTime: '4 Min.',
+    icon: Smartphone
+  },
+  {
+    slug: 'fahrverbot-umgehen',
+    title: 'Fahrverbot in Geldstrafe umwandeln',
+    excerpt: 'So können Sie ein Fahrverbot unter bestimmten Voraussetzungen umgehen.',
+    category: 'Fahrverbot',
+    readTime: '5 Min.',
+    icon: MapPin
+  },
+  {
+    slug: 'geblitzt-probezeit',
+    title: 'Geblitzt in der Probezeit',
+    excerpt: 'Was Fahranfänger bei einem Blitzer in der Probezeit beachten müssen.',
+    category: 'Probezeit',
+    readTime: '4 Min.',
+    icon: Users
+  }
+];
+
+export const datenskandalArticles = [
+  {
+    slug: 'facebook-datenskandal',
+    title: 'Facebook Datenskandal: Schadensersatz sichern',
+    excerpt: 'Wie Sie von dem Datenleck betroffen sind und wie Sie Entschädigung erhalten.',
+    category: 'Datenleck',
+    readTime: '5 Min.',
+    icon: Shield
+  },
+  {
+    slug: 'linkedin-schadensersatz',
+    title: 'LinkedIn Datenskandal: Entschädigung sichern',
+    excerpt: 'Schadensersatz für vom LinkedIn Datenleck betroffene Nutzer.',
+    category: 'Datenleck',
+    readTime: '4 Min.',
+    icon: Shield
+  },
+  {
+    slug: 'deezer-schadensersatz',
+    title: 'Deezer Datenskandal: Schadensersatz sichern',
+    excerpt: 'Ihre Rechte nach dem Deezer Datenleck.',
+    category: 'Datenleck',
+    readTime: '4 Min.',
+    icon: Shield
+  },
+  {
+    slug: 'datenleck-schadensersatz',
+    title: 'Datenleck Schadensersatz: So funktioniert es',
+    excerpt: 'Allgemeine Informationen zu Schadensersatzansprüchen bei Datenlecks.',
+    category: 'Datenleck',
+    readTime: '5 Min.',
+    icon: Shield
+  },
+  {
+    slug: 'datenleck-checker',
+    title: 'Datenleck Checker: Bin ich betroffen?',
+    excerpt: 'Prüfen Sie, ob Ihre Daten in einem bekannten Datenleck kompromittiert wurden.',
+    category: 'Checker',
+    readTime: '3 Min.',
+    icon: CheckCircle2
+  },
+  {
+    slug: 'datenleck-rechtsschutzversicherung',
+    title: 'Datenleck & Rechtsschutzversicherung',
+    excerpt: 'Schadensersatzansprüche mit und ohne Rechtsschutzversicherung durchsetzen.',
+    category: 'Versicherung',
+    readTime: '5 Min.',
+    icon: Shield
+  },
+  {
+    slug: 'tesla-schadensersatz',
+    title: 'Tesla Datenskandal: Schadensersatz sichern',
+    excerpt: 'Wie Sie von dem Tesla Datenleck betroffen sind und Entschädigung erhalten.',
+    category: 'Datenleck',
+    readTime: '5 Min.',
+    icon: Shield
+  },
+  {
+    slug: 'twitter-schadensersatz',
+    title: 'Twitter/X Datenskandal: Schadensersatz sichern',
+    excerpt: 'Schadensersatz nach dem Twitter Datenleck fordern.',
+    category: 'Datenleck',
+    readTime: '5 Min.',
+    icon: Shield
+  },
+  {
+    slug: 'facebook-entschaedigung',
+    title: 'Facebook Entschädigung: Schadensersatz sichern',
+    excerpt: 'Wie Sie Ihre Entschädigung aus dem Facebook Datenleck erhalten.',
+    category: 'Datenleck',
+    readTime: '5 Min.',
+    icon: Shield
+  }
+];
 
 export default function Ratgeber() {
-  const categories = [
-    {
-      title: "Verkehrsrecht",
-      description: "Alles rund um Bußgelder, Fahrverbote und Verkehrsverstöße",
-      icon: Shield,
-      color: "from-teal-500 to-cyan-500",
-      articles: [
-        "Bußgeldbescheid: Was tun?",
-        "Fahrverbot umgehen",
-        "Geschwindigkeitsmessung anzweifeln",
-        "Rotlichtverstoß: Verteidigungsmöglichkeiten"
-      ]
-    },
-    {
-      title: "Datenschutz",
-      description: "Ihre Rechte nach DSGVO und bei Datenlecks",
-      icon: Shield,
-      color: "from-blue-500 to-indigo-500",
-      articles: [
-        "DSGVO: Ihre Rechte",
-        "Datenleck - was nun?",
-        "Schadensersatz fordern",
-        "Datenschutz-Grundverordnung einfach erklärt"
-      ]
-    },
-    {
-      title: "Verbraucherrecht",
-      description: "Schutz für Verbraucher bei Problemen",
-      icon: Shield,
-      color: "from-green-500 to-emerald-500",
-      articles: [
-        "Rückgaberecht online",
-        "Gewährleistung vs. Garantie",
-        "Flugverspätung: Entschädigung",
-        "Beschwerde richtig einreichen"
-      ]
-    }
-  ];
-
-  const articles = [
-    {
-      title: "Bußgeldbescheid erhalten: Die ersten Schritte",
-      excerpt: "Was Sie tun sollten, wenn Sie einen Bußgeldbescheid bekommen haben.",
-      category: "Verkehrsrecht",
-      readTime: "5 min",
-      date: "15.02.2026"
-    },
-    {
-      title: "Wie Sie Ihren Bußgeldbescheid anfechten",
-      excerpt: "Ein Widerspruch kann sich lohnen. Hier erfahren Sie, wie es geht.",
-      category: "Verkehrsrecht",
-      readTime: "8 min",
-      date: "12.02.2026"
-    },
-    {
-      title: "DSGVO: Das sind Ihre Rechte",
-      excerpt: "Die Datenschutz-Grundverordnung gibt Ihnen starke Rechte.",
-      category: "Datenschutz",
-      readTime: "6 min",
-      date: "10.02.2026"
-    },
-    {
-      title: "Datenleck: Muss ich mir Sorgen machen?",
-      excerpt: "Wenn Ihre Daten geleakt wurden, gibt es Schadensersatz.",
-      category: "Datenschutz",
-      readTime: "7 min",
-      date: "08.02.2026"
-    },
-    {
-      title: "Fahrverbot: Ausnahmen und Möglichkeiten",
-      excerpt: "Unter bestimmten Umständen können Sie ein Fahrverbot abwenden.",
-      category: "Verkehrsrecht",
-      readTime: "10 min",
-      date: "05.02.2026"
-    },
-    {
-      title: "Was tun bei Flugverspätung?",
-      excerpt: "Bis zu 600€ Entschädigung bei Flugverspätungen möglich.",
-      category: "Verbraucherrecht",
-      readTime: "5 min",
-      date: "03.02.2026"
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-20 pb-32 px-6 overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-20">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(20,184,166,0.3),transparent_70%)]" />
+      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-20 pb-24 px-6 overflow-hidden">
+        {/* Video Background */}
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover opacity-30"
+          >
+            <source src="/Loop_scale_pans_book_flip_3f093c618a.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-900/70 to-slate-800/90" />
         </div>
 
         <div className="max-w-6xl mx-auto text-center relative z-10">
@@ -121,134 +173,114 @@ export default function Ratgeber() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight"
+            className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight"
           >
-            Ihr Ratgeber für <br />
-            <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
-              rechtliche Fragen
-            </span>
+            Ratgeber & <span className="text-teal-400">Wissen</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto mb-10"
+            className="text-xl text-slate-300 max-w-2xl mx-auto"
           >
-            Verständliche Informationen zu Ihren Rechten. Einfach erklärt.
+            Kompetente Informationen zu Ihren Rechten bei Bußgeldern, Datenlecks und mehr.
           </motion.p>
-
-          {/* Search Bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="max-w-2xl mx-auto"
-          >
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
-              <input
-                type="text"
-                placeholder="Suchen Sie nach Themen..."
-                className="w-full pl-12 pr-6 py-4 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-400/50 text-lg"
-              />
-            </div>
-          </motion.div>
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section className="py-24 px-6 bg-slate-50">
+      {/* Navigation Tabs */}
+      <section className="py-8 px-6 bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link
+              to="/ratgeber#verkehrsrecht"
+              className="px-6 py-3 bg-slate-900 text-white rounded-full font-medium hover:bg-slate-800 transition-colors"
+            >
+              Verkehrsrecht
+            </Link>
+            <Link
+              to="/ratgeber#datenskandal"
+              className="px-6 py-3 bg-white text-slate-700 border border-slate-300 rounded-full font-medium hover:bg-slate-50 transition-colors"
+            >
+              Datenskandal
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Verkehrsrecht Articles */}
+      <section id="verkehrsrecht" className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">Themenwelten</h2>
-            <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-              Wählen Sie einen Bereich, der Sie interessiert.
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Verkehrsrecht</h2>
+            <p className="text-slate-600 max-w-2xl mx-auto">
+              Alles rund um Bußgeldbescheide, Fahrverbote und Ihre Rechte im Straßenverkehr.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {categories.map((category, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {verkehrsrechtArticles.map((article, i) => (
               <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
+                key={article.slug}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -5 }}
-                className="bg-white p-8 rounded-3xl shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300"
+                transition={{ delay: i * 0.05 }}
               >
-                <div className={`w-14 h-14 bg-gradient-to-br ${category.color} rounded-2xl flex items-center justify-center text-white shadow-lg mb-6`}>
-                  <category.icon size={28} />
-                </div>
-                <h3 className="font-bold text-xl text-slate-900 mb-3">{category.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed mb-6">{category.description}</p>
-                <ul className="space-y-2">
-                  {category.articles.map((article, j) => (
-                    <li key={j}>
-                      <Link to="/" className="flex items-center gap-2 text-teal-600 text-sm hover:text-teal-700">
-                        <ChevronRight size={14} />
-                        {article}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                <ArticleCard
+                  slug={article.slug}
+                  title={article.title}
+                  excerpt={article.excerpt}
+                  category={article.category}
+                  readTime={article.readTime}
+                  icon={article.icon}
+                  variant="teal"
+                />
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Articles Section */}
-      <section className="py-24 px-6 bg-white">
+      {/* Datenskandal Articles */}
+      <section id="datenskandal" className="py-20 px-6 bg-slate-100">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">Aktuelle Artikel</h2>
-            <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-              Hilfreiche Informationen zu aktuellen Themen.
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Datenskandal</h2>
+            <p className="text-slate-600 max-w-2xl mx-auto">
+              Informationen zu Datenlecks und wie Sie Schadensersatzansprüche geltend machen.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {articles.map((article, i) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {datenskandalArticles.map((article, i) => (
               <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
+                key={article.slug}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                whileHover={{ y: -5 }}
               >
-                <Link to="/">
-                  <div className="bg-slate-50 p-6 rounded-2xl hover:bg-slate-100 transition-colors h-full border border-slate-100">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-xs font-bold text-teal-600 bg-teal-100 px-2 py-1 rounded">{article.category}</span>
-                      <span className="text-xs text-slate-400 flex items-center gap-1">
-                        <Clock size={12} /> {article.readTime}
-                      </span>
-                    </div>
-                    <h3 className="font-bold text-lg text-slate-900 mb-2">{article.title}</h3>
-                    <p className="text-slate-500 text-sm leading-relaxed mb-4">{article.excerpt}</p>
-                    <div className="flex items-center justify-between text-xs text-slate-400">
-                      <span className="flex items-center gap-1">
-                        <Calendar size={12} /> {article.date}
-                      </span>
-                      <span className="text-teal-600 font-medium flex items-center gap-1">
-                        Weiterlesen <ArrowRight size={14} />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
+                <ArticleCard
+                  slug={article.slug}
+                  title={article.title}
+                  excerpt={article.excerpt}
+                  category={article.category}
+                  readTime={article.readTime}
+                  icon={article.icon}
+                  variant="blue"
+                />
               </motion.div>
             ))}
           </div>
@@ -263,17 +295,17 @@ export default function Ratgeber() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            <h2 className="text-3xl font-bold text-white mb-6">
               Noch Fragen?
             </h2>
-            <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
-              Lassen Sie Ihre Situation kostenlos von unseren Experten prüfen.
+            <p className="text-slate-300 text-lg mb-8">
+              Lassen Sie Ihren Fall kostenlos von unseren Experten prüfen.
             </p>
             <Link to="/">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="bg-gradient-to-r from-teal-400 to-cyan-400 text-slate-900 font-bold py-4 px-10 rounded-full shadow-lg shadow-teal-400/25 hover:shadow-teal-400/40 transition-all inline-flex items-center gap-2"
+                className="bg-gradient-to-r from-teal-400 to-cyan-400 text-slate-900 font-bold py-4 px-10 rounded-full shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
               >
                 Kostenlos prüfen <ArrowRight size={20} />
               </motion.button>
