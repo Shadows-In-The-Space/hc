@@ -1,0 +1,78 @@
+{
+  "name": "helpcheck",
+  "overview": "helpcheck is a leading German legal-tech company that provides consumers with a digital platform to enforce legal claims in areas such as traffic law, data leaks, and insurance withdrawals. By combining AI-supported analysis with specialized partner lawyers, they offer risk-free legal enforcement where customers only pay a fee upon successful recovery.",
+  "websiteUrl": "https://www.helpcheck.de/",
+  "brandValues": ["Digital Efficiency", "No Cost Risk", "Juridical Expertise", "Transparency", "Customer Centricity"],
+  "visualAesthetics": ["human-centric", "authoritative", "transparent", "geometric", "modern"],
+  "toneOfVoice": ["Professional", "Accessible", "Supportive", "Empowering"],
+  "fonts": ["work sans"],
+  "campaigns": [{
+    "creatives": [{
+      "title": "Legal justice without the gamble",
+      "versions": [{
+        "fileName": "resource_8Xnul1yr4dQ3N_lPMCP_0D.png"
+      }]
+    }, {
+      "title": "Stop risking your own money",
+      "versions": [{
+        "fileName": "resource_8WIutSgqIpqfdg9Fg_q4ha.png"
+      }]
+    }, {
+      "title": "We only win if you do",
+      "versions": [{
+        "fileName": "resource_bEGVxsYn0XQ3jdcU5z_kbH.png"
+      }]
+    }, {
+      "title": "Zero risk, maximum results",
+      "versions": [{
+        "fileName": "resource_9KB5znOvpxf0hriEosI_hA.png"
+      }]
+    }]
+  }, {
+    "creatives": [{
+      "title": "Ihr Geld-Check vor 2027",
+      "versions": [{
+        "fileName": "resource_bmW59061q-X99LBt6-Q_37.png"
+      }]
+    }, {
+      "title": "Altes Jahr, neues Budget",
+      "versions": [{
+        "fileName": "resource_9TiXOFLQGlP9d_weUQWOBr.png"
+      }]
+    }, {
+      "title": "Null Risiko für Sie",
+      "versions": [{
+        "fileName": "resource_aDzVmncgZbo97bYCZDYkXy.png"
+      }]
+    }, {
+      "title": "Bereit für den Jahreswechsel?",
+      "versions": [{
+        "fileName": "resource_bUonuu1MP_cdSP4y_ds_ni.png"
+      }]
+    }]
+  }, {
+    "creatives": [{
+      "title": "Your Easter Travel Rights",
+      "versions": [{
+        "fileName": "resource_8vkQFDi5-LH73L-UTLz4oV.png"
+      }, {
+        "fileName": "resource_bDoP16DFWxJbQbywV00_qN.png"
+      }]
+    }, {
+      "title": "Speeding Ticket Review",
+      "versions": [{
+        "fileName": "resource_aWTXcomYcTPbyKOwMgTkW4.png"
+      }]
+    }, {
+      "title": "Success-Based Pricing",
+      "versions": [{
+        "fileName": "resource_bV068UVebfd6CraqTrxOzL.png"
+      }]
+    }, {
+      "title": "Digital Legal Support",
+      "versions": [{
+        "fileName": "resource_8QqsXayAiU-7vgckvJ9kSX.png"
+      }]
+    }]
+  }]
+}
