@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  ChevronDown, 
+import {
+  ChevronDown,
   Facebook,
   Instagram,
   Twitter,
@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { ChatProvider, FloatingWidget } from './components/chatbot';
+import { useSmoothScroll } from './hooks/useSmoothScroll';
 import Home from './pages/Home';
 import Verkehrsrecht from './pages/Verkehrsrecht';
 import Ratgeber from './pages/Ratgeber';
@@ -191,6 +192,8 @@ const AppContent: React.FC = () => {
 };
 
 export default function App() {
+  useSmoothScroll();
+
   return (
     <ChatProvider>
       <Router>

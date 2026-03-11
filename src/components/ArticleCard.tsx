@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { ArrowRight, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useIsMobile } from '../hooks/useMediaQuery';
 
 interface ArticleCardProps {
   slug: string;
@@ -22,6 +23,8 @@ export default function ArticleCard({
   icon: Icon,
   variant = 'teal'
 }: ArticleCardProps) {
+  const isMobile = useIsMobile();
+
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -52,12 +55,12 @@ export default function ArticleCard({
     <Link to={`/ratgeber/${slug}`}>
       <motion.div
         style={{
-          rotateX,
-          rotateY,
-          transformStyle: "preserve-3d"
+          rotateX: isMobile ? 0 : rotateX,
+          rotateY: isMobile ? 0 : rotateY,
+          transformStyle: isMobile ? "flat" : "preserve-3d"
         }}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
+        onMouseMove={isMobile ? undefined : handleMouseMove}
+        onMouseLeave={isMobile ? undefined : handleMouseLeave}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
