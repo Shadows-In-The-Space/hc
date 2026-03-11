@@ -10,7 +10,8 @@ import {
   MapPin,
   Users,
   FileText,
-  ChevronRight
+  ChevronRight,
+  CheckCircle2
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ArticleCard from '../components/ArticleCard';

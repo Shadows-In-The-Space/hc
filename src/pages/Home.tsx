@@ -244,10 +244,18 @@ export default function Home() {
     <>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-20 pb-32 px-6 overflow-hidden">
-        {/* Background Gradient */}
+        {/* Video Background */}
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(20,184,166,0.15),transparent_50%)]" />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/60 to-slate-800/80" />
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover opacity-20 animate-ken-burns"
+          >
+            <source src="/Loop_scale_pans_book_flip_3f093c618a.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/90 via-slate-900/70 to-slate-800/90" />
         </div>
 
         {/* Animated Grid Pattern */}
