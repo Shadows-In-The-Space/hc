@@ -339,11 +339,15 @@ export default function Home() {
                 whileHover={{ y: -8 }}
                 className="group relative h-[400px] rounded-3xl overflow-hidden shadow-xl"
               >
-                <img
-                  src="/hero_verkehrsrecht.jpeg"
-                  alt="Verkehrsrecht"
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
+                >
+                  <source src="/hero_verkehrsrecht.mp4" type="video/mp4" />
+                </video>
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-8">
                   <div className="w-14 h-14 bg-teal-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
@@ -370,11 +374,15 @@ export default function Home() {
                 whileHover={{ y: -8 }}
                 className="group relative h-[400px] rounded-3xl overflow-hidden shadow-xl"
               >
-                <img
-                  src="/hero_datenskandal.jpeg"
-                  alt="Datenleck"
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
+                >
+                  <source src="/Loop_scale_pans_book_flip_3f093c618a.mp4" type="video/mp4" />
+                </video>
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-8">
                   <div className="w-14 h-14 bg-red-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
