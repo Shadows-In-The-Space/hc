@@ -3,6 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import leadsRouter from './routes/leads';
 import emailRouter from './routes/email';
+import authRouter from './routes/auth';
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -17,6 +18,7 @@ app.use('/data', express.static(path.join(__dirname, '../../data')));
 // Routes
 app.use('/api', leadsRouter);
 app.use('/api', emailRouter);
+app.use('/api', authRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {

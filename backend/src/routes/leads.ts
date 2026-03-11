@@ -1,8 +1,26 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import db from '../db';
 
 const router = Router();
+
+// Auth middleware
+const requireAuth = (req: Request, res: Response, next: NextFunction) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const token = authHeader.substring(7);
+  const tokens = (global as any).adminTokens || {};
+
+  if (!tokens[token]) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+
+  next();
+};
 
 // Schema for lead validation
 const leadSchema = z.object({
@@ -59,8 +77,8 @@ router.post('/leads', async (req, res) => {
   }
 });
 
-// Get all leads
-router.get('/leads', (req, res) => {
+// Get all leads (protected)
+router.get('/leads', requireAuth, (req, res) => {
   try {
     const leads = db.prepare('SELECT * FROM leads ORDER BY created_at DESC').all();
     res.json(leads);
@@ -69,8 +87,8 @@ router.get('/leads', (req, res) => {
   }
 });
 
-// Get lead by email
-router.get('/leads/:email', (req, res) => {
+// Get lead by email (protected)
+router.get('/leads/:email', requireAuth, (req, res) => {
   try {
     const lead = db.prepare('SELECT * FROM leads WHERE email = ?').get(req.params.email);
     if (!lead) {
@@ -82,8 +100,8 @@ router.get('/leads/:email', (req, res) => {
   }
 });
 
-// Update lead status
-router.patch('/leads/:id/status', (req, res) => {
+// Update lead status (protected)
+router.patch('/leads/:id/status', requireAuth, (req, res) => {
   try {
     const { status } = req.body;
     const stmt = db.prepare('UPDATE leads SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
