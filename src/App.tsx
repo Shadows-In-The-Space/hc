@@ -1,15 +1,31 @@
 import React, { useState } from 'react';
-import {
-  ChevronDown,
+import { 
+  ChevronDown, 
   Facebook,
   Instagram,
   Twitter,
   Bot
 } from 'lucide-react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { ChatProvider, FloatingWidget } from './components/chatbot';
 import Home from './pages/Home';
 import Verkehrsrecht from './pages/Verkehrsrecht';
-import { ChatProvider, FloatingWidget } from './components/chatbot';
+import Ratgeber from './pages/Ratgeber';
+import AboutUs from './pages/AboutUs';
+import Contact from './pages/Contact';
+import Datenskandal from './pages/Datenskandal';
+import HandyAmSteuer from './pages/HandyAmSteuer';
+import Geschwindigkeit from './pages/Geschwindigkeit';
+import FacebookDatenleck from './pages/FacebookDatenleck';
+import Rotlichtverstoss from './pages/Rotlichtverstoss';
+import Fahrverbot from './pages/Fahrverbot';
+import DSGVO from './pages/DSGVO';
+import LinkedInDatenleck from './pages/LinkedInDatenleck';
+import DeezerDatenleck from './pages/DeezerDatenleck';
+import Impressum from './pages/Impressum';
+import Datenschutz from './pages/Datenschutz';
+import Jobs from './pages/Jobs';
+import Presse from './pages/Presse';
 
 // --- Shared Components ---
 
@@ -27,12 +43,12 @@ const Navbar = () => (
         </div>
         <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all p-2">
           <Link to="/verkehrsrecht" className="block px-4 py-2 hover:bg-gray-50 rounded-lg text-sm">Verkehrsrecht</Link>
-          <a href="#" className="block px-4 py-2 hover:bg-gray-50 rounded-lg text-sm">Datenleck</a>
+          <Link to="/datenskandal" className="block px-4 py-2 hover:bg-gray-50 rounded-lg text-sm">Datenleck</Link>
         </div>
       </div>
-      <a href="#" className="hover:text-blue-600">Ratgeber</a>
-      <a href="#" className="hover:text-blue-600">Über uns</a>
-      <a href="#" className="hover:text-blue-600">Hilfe & Kontakt</a>
+      <Link to="/ratgeber" className="hover:text-blue-600">Ratgeber</Link>
+      <Link to="/about" className="hover:text-blue-600">Über uns</Link>
+      <Link to="/contact" className="hover:text-blue-600">Hilfe & Kontakt</Link>
       <a href="#" className="text-gray-900 font-semibold hover:text-blue-600">Login</a>
       <button className="bg-blue-900 text-white px-4 py-2 rounded-md text-xs font-bold flex items-center gap-2">
         <div className="w-4 h-4 bg-white/20 rounded-sm"></div>
@@ -68,27 +84,27 @@ const Footer = () => (
           <h5 className="font-bold mb-6">Service</h5>
           <ul className="space-y-3 text-sm text-white/60">
             <li><Link to="/verkehrsrecht" className="hover:text-white cursor-pointer">Verkehrsrecht</Link></li>
-            <li className="hover:text-white cursor-pointer">Datenleck</li>
+            <li><Link to="/datenskandal" className="hover:text-white cursor-pointer">Datenleck</Link></li>
           </ul>
         </div>
 
         <div>
           <h5 className="font-bold mb-6">Informationen</h5>
           <ul className="space-y-3 text-sm text-white/60">
-            <li className="hover:text-white cursor-pointer">Häufige Fragen</li>
-            <li className="hover:text-white cursor-pointer">Ratgeber</li>
-            <li className="hover:text-white cursor-pointer">Presse</li>
-            <li className="hover:text-white cursor-pointer">Kontakt</li>
+            <li><Link to="/verkehrsrecht#faq" className="hover:text-white cursor-pointer">Häufige Fragen</Link></li>
+            <li><Link to="/ratgeber" className="hover:text-white cursor-pointer">Ratgeber</Link></li>
+            <li><Link to="/presse" className="hover:text-white cursor-pointer">Presse</Link></li>
+            <li><Link to="/contact" className="hover:text-white cursor-pointer">Kontakt</Link></li>
           </ul>
         </div>
 
         <div>
           <h5 className="font-bold mb-6">helpcheck</h5>
           <ul className="space-y-3 text-sm text-white/60">
-            <li className="hover:text-white cursor-pointer">Über uns</li>
-            <li className="hover:text-white cursor-pointer">Jobs</li>
-            <li className="hover:text-white cursor-pointer">Impressum</li>
-            <li className="hover:text-white cursor-pointer">Datenschutz</li>
+            <li><Link to="/about" className="hover:text-white cursor-pointer">Über uns</Link></li>
+            <li><Link to="/jobs" className="hover:text-white cursor-pointer">Jobs</Link></li>
+            <li><Link to="/impressum" className="hover:text-white cursor-pointer">Impressum</Link></li>
+            <li><Link to="/datenschutz" className="hover:text-white cursor-pointer">Datenschutz</Link></li>
           </ul>
         </div>
       </div>
@@ -110,7 +126,7 @@ const CookieBanner = () => {
   if (!isVisible) return null;
   
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-6 z-[100] shadow-2xl">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-6 z-100 shadow-2xl">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="flex-1">
           <h4 className="font-bold text-gray-900 mb-2">Diese Webseite verwendet Cookies</h4>
@@ -138,7 +154,6 @@ const CookieBanner = () => {
   );
 };
 
-// Wrapper component for routes to handle floating widget visibility
 const AppContent: React.FC = () => {
   const location = useLocation();
   const isSpecialPage = location.pathname === '/' || location.pathname === '/verkehrsrecht';
@@ -146,15 +161,27 @@ const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900 selection:bg-teal-100">
       <Navbar />
-
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/verkehrsrecht" element={<Verkehrsrecht />} />
+        <Route path="/datenskandal" element={<Datenskandal />} />
+        <Route path="/ratgeber" element={<Ratgeber />} />
+        <Route path="/facebook-datenleck" element={<FacebookDatenleck />} />
+        <Route path="/linkedin-datenleck" element={<LinkedInDatenleck />} />
+        <Route path="/deezer-datenleck" element={<DeezerDatenleck />} />
+        <Route path="/handy-am-steuer" element={<HandyAmSteuer />} />
+        <Route path="/geschwindigkeit" element={<Geschwindigkeit />} />
+        <Route path="/rotlichtverstoss" element={<Rotlichtverstoss />} />
+        <Route path="/fahrverbot" element={<Fahrverbot />} />
+        <Route path="/dsgvo" element={<DSGVO />} />
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/impressum" element={<Impressum />} />
+        <Route path="/datenschutz" element={<Datenschutz />} />
+        <Route path="/jobs" element={<Jobs />} />
+        <Route path="/presse" element={<Presse />} />
       </Routes>
-
-      {/* Floating Widget on other pages */}
       {!isSpecialPage && <FloatingWidget />}
-
       <Footer />
       <CookieBanner />
     </div>

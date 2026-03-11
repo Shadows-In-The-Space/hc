@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  ChevronDown, 
-  MessageSquare, 
-  Car, 
-  ShieldCheck, 
-  CheckCircle2, 
-  Zap, 
+import {
+  ChevronDown,
+  MessageSquare,
+  Car,
+  ShieldCheck,
+  CheckCircle2,
+  Zap,
   Star,
   Facebook,
   Instagram,
   Twitter,
   Send,
   User,
-  Bot
+  Bot,
+  ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI } from "@google/genai";
@@ -242,39 +243,71 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-blue-900 via-blue-800 to-teal-500 pt-20 pb-32 px-6 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-300 rounded-full blur-3xl"></div>
+      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-20 pb-32 px-6 overflow-hidden">
+        {/* Video Background */}
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover opacity-60"
+          >
+            <source src="/hero_verkehrsrecht.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-900/50 to-slate-800/70" />
+        </div>
+
+        {/* Animated Grid Pattern */}
+        <div className="absolute inset-0 z-0 opacity-5">
+          <div className="w-full h-full" style={{
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px'
+          }}></div>
         </div>
 
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight"
+            className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight"
           >
             Ihr Recht. Unser Chat. <br />
-            <span className="text-teal-300">Schadensersatz sichern.</span>
+            <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
+              Schadensersatz sichern.
+            </span>
           </motion.h1>
 
-          <motion.div 
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto mb-8"
+          >
+            Deutschlands führende Plattform für Verbraucherrechte.
+            Kostenlos prüfen. Kein Risiko.
+          </motion.p>
+
+          {/* Trust Badges */}
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="flex flex-wrap justify-center items-center gap-6 mb-12 text-white/80 text-sm font-medium"
+            transition={{ delay: 0.3 }}
+            className="flex flex-wrap justify-center items-center gap-8 mb-12"
           >
-            <div className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-teal-400" />
-              <span>TÜV geprüft</span>
+            <div className="flex items-center gap-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-5 py-2">
+              <img src="/tuev-siegel.webp" alt="TÜV" className="w-8 h-8" />
+              <span className="text-slate-300 text-sm font-medium">TÜV geprüft</span>
             </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-teal-400" />
-              <span>Über 20.000 zufriedene Kunden</span>
+            <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
+              <span className="bg-teal-500 text-slate-900 text-xs font-bold px-2 py-0.5 rounded">4,8</span>
+              <Star className="text-teal-400 w-4 h-4" fill="currentColor" />
+              <span>Trustpilot</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
               <CheckCircle2 size={16} className="text-teal-400" />
-              <span>Kostenlose Ersteinschätzung</span>
+              <span>20.000+ Kunden</span>
             </div>
           </motion.div>
           
@@ -289,26 +322,148 @@ export default function Home() {
       </section>
 
       {/* Services Section */}
-      <section className="py-24 px-6 -mt-16 relative z-20">
+      <section className="py-24 px-6 bg-slate-50">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-16">Unsere Leistungen</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            <ServiceCard 
-              icon={Car} 
-              title="Verkehrsrecht" 
-              description="Bußgeldbescheid prüfen, Fahrverbot abwenden und Punkte in Flensburg vermeiden." 
-              link="/verkehrsrecht"
-            />
-            <ServiceCard 
-              icon={ShieldCheck} 
-              title="Datenleck" 
-              description="Prüfen Sie, ob Sie von einem Datenleck (z.B. Facebook, Deezer) betroffen sind und sichern Sie sich Schadensersatz." 
-            />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">Unsere Leistungen</h2>
+            <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+              Wir setzen uns für Ihre Rechte ein – schnell, unkompliziert und kostenlos.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Traffic Law Card */}
+            <Link to="/verkehrsrecht">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                whileHover={{ y: -8 }}
+                className="group relative h-[400px] rounded-3xl overflow-hidden shadow-xl"
+              >
+                <img
+                  src="/hero_verkehrsrecht.avif"
+                  alt="Verkehrsrecht"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-8">
+                  <div className="w-14 h-14 bg-teal-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                    <Car className="text-white" size={28} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Verkehrsrecht</h3>
+                  <p className="text-slate-300 mb-4">
+                    Bußgeldbescheid prüfen, Fahrverbot abwenden und Punkte in Flensburg vermeiden.
+                  </p>
+                  <span className="inline-flex items-center gap-2 text-teal-400 font-medium group-hover:gap-3 transition-all">
+                    Jetzt prüfen <ArrowRight size={18} />
+                  </span>
+                </div>
+              </motion.div>
+            </Link>
+
+            {/* Data Leak Card */}
+            <Link to="/datenskandal">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                whileHover={{ y: -8 }}
+                className="group relative h-[400px] rounded-3xl overflow-hidden shadow-xl"
+              >
+                <img
+                  src="/hero_datenskandal.jpeg"
+                  alt="Datenleck"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-8">
+                  <div className="w-14 h-14 bg-red-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                    <ShieldCheck className="text-white" size={28} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Datenleck</h3>
+                  <p className="text-slate-300 mb-4">
+                    Prüfen Sie, ob Sie von einem Datenleck betroffen sind und sichern Sie sich Schadensersatz.
+                  </p>
+                  <span className="inline-flex items-center gap-2 text-teal-400 font-medium group-hover:gap-3 transition-all">
+                    Jetzt prüfen <ArrowRight size={18} />
+                  </span>
+                </div>
+              </motion.div>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Advantages Section */}
+      <section className="py-24 px-6 bg-slate-900">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-white mb-4">Warum helpcheck?</h2>
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+              Wir setzen uns für Ihre Rechte ein – mit Expertise und modernster Technologie.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 p-8 rounded-2xl"
+            >
+              <div className="w-14 h-14 bg-teal-500/10 rounded-2xl flex items-center justify-center mb-6">
+                <ShieldCheck className="text-teal-400" size={28} />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Kein Kostenrisiko</h3>
+              <p className="text-slate-400">Wir übernehmen alle Kosten. Sie zahlen nur bei Erfolg – kein Risiko für Sie.</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 p-8 rounded-2xl"
+            >
+              <div className="w-14 h-14 bg-teal-500/10 rounded-2xl flex items-center justify-center mb-6">
+                <CheckCircle2 className="text-teal-400" size={28} />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">95% Erfolgsquote</h3>
+              <p className="text-slate-400">Unsere Expertise spricht für sich – hohe Erfolgsquote bei allen Verfahren.</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 p-8 rounded-2xl"
+            >
+              <div className="w-14 h-14 bg-teal-500/10 rounded-2xl flex items-center justify-center mb-6">
+                <Zap className="text-teal-400" size={28} />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-3">Express-Prüfung</h3>
+              <p className="text-slate-400">Schnelle Ersteinschätzung innerhalb von 24h – damit Sie schnell Gewissheit haben.</p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Old Advantages Section - commented out
       <section className="py-24 bg-white px-6">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-16">Vorteile</h2>

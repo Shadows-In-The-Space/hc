@@ -1,32 +1,57 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'motion/react';
-import { 
-  Car, 
-  CheckCircle2, 
-  AlertTriangle, 
-  Clock, 
-  ShieldCheck, 
+import {
+  Car,
+  CheckCircle2,
+  AlertTriangle,
+  Clock,
+  ShieldCheck,
   ArrowRight,
+  ArrowLeft,
   Upload,
-  HelpCircle
+  HelpCircle,
+  Zap,
+  Gauge,
+  FileText,
+  Users,
+  Award,
+  TrendingUp
 } from 'lucide-react';
 import { ChatInterface } from '../components/chatbot';
+import { FAQSection, verkehrsrechtFAQs } from '../components/FAQSection';
+import { generateOrganizationSchema, generateFAQSchema } from '../utils/seo';
+import { Link } from 'react-router-dom';
 
 export default function Verkehrsrecht() {
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (carouselRef.current) {
+      const scrollAmount = 400;
+      carouselRef.current.scrollBy({
+        left: direction === 'right' ? scrollAmount : -scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+  // Structured Data für SEO
+  const organizationSchema = generateOrganizationSchema();
+  const faqSchema = generateFAQSchema(verkehrsrechtFAQs);
+
   const steps = [
     {
-      title: "Bescheid hochladen oder Fragen beantworten",
-      description: "Laden Sie Ihren Bescheid bequem online hoch oder beantworten Sie mit ein paar Klicks Fragen zu Ihrem Fall.",
+      title: "Bescheid hochladen",
+      description: "Laden Sie Ihren Bußgeldbescheid bequem online hoch oder beantworten Sie ein paar Fragen.",
       icon: Upload
     },
     {
-      title: "Kostenlose Einschätzung erhalten",
-      description: "Sie bekommen sofort Klarheit über Ihre Handlungsmöglichkeiten und Erfolgschancen.",
+      title: "Kostenlose Prüfung",
+      description: "Unsere Experten prüfen Ihren Fall innerhalb von 24 Stunden.",
       icon: ShieldCheck
     },
     {
-      title: "Schnell & einfach Strafe verhindern",
-      description: "Unsere Partneranwälte helfen Ihnen, Bußgeld, Punkte oder ein drohendes Fahrverbot erfolgreich abzuwehren.",
+      title: "Erfolgreich wehren",
+      description: "Wir setzen Ihre Rechte durch – ohne Kostenrisiko für Sie.",
       icon: CheckCircle2
     }
   ];
@@ -34,138 +59,391 @@ export default function Verkehrsrecht() {
   const topics = [
     {
       title: "Geschwindigkeitsverstoß",
-      description: "Je nach Höhe der Geschwindigkeitsüberschreitung drohen Bußgelder, Punkte oder ein Fahrverbot. Messungen sind oft fehlerhaft.",
-      icon: Zap
+      description: "Blitzer, Lasermessung & Radarkontrollen. Häufig sind Messungen fehlerhaft.",
+      icon: Gauge,
+      color: "from-orange-500 to-red-500",
+      link: "/geschwindigkeit"
     },
     {
       title: "Rotlichtverstoß",
-      description: "Ein Rotlichtverstoß wird streng geahndet. Wir prüfen, ob die Ampelphase oder Messung korrekt war.",
-      icon: AlertTriangle
+      description: "Ampelphase und Messung prüfen lassen. Oft kann erfolgreich verteidigt werden.",
+      icon: AlertTriangle,
+      color: "from-red-500 to-pink-500",
+      link: "/rotlichtverstoss"
     },
     {
       title: "Abstandsverstoß",
-      description: "Abstandsmessungen sind technisch anspruchsvoll und häufig angreifbar. Wir prüfen die Videoaufzeichnungen.",
-      icon: ArrowRight
+      description: "Videoaufzeichnungen analysieren. Abstandsmessungen sind oft angreifbar.",
+      icon: TrendingUp,
+      color: "from-purple-500 to-indigo-500",
+      link: "/fahrverbot"
     },
     {
       title: "Handy am Steuer",
-      description: "Nicht jede Nutzung ist verboten. Unklare Beobachtungen sind oft die Grundlage für eine erfolgreiche Verteidigung.",
-      icon: HelpCircle
+      description: "Nicht jeder Fall ist eindeutig. Wir prüfen die Beweislage.",
+      icon: HelpCircle,
+      color: "from-blue-500 to-cyan-500",
+      link: "/handy-am-steuer"
+    }
+  ];
+
+  const advantages = [
+    {
+      title: "Kein Kostenrisiko",
+      description: "Sie zahlen nur im Erfolgsfall. Kein Vorabrisiko.",
+      icon: ShieldCheck,
+      stat: "100%"
+    },
+    {
+      title: "Erfolgsquote",
+      description: "Hohe Erfolgsquote bei der Verteidigung Ihrer Rechte.",
+      icon: Award,
+      stat: "95%"
+    },
+    {
+      title: "Schnelle Prüfung",
+      description: "Innerhalb von 24 Stunden wissen Sie, wie Ihre Chancen stehen.",
+      icon: Clock,
+      stat: "24h"
+    },
+    {
+      title: "Erfahrene Anwälte",
+      description: "Netzwerk aus spezialisierten Partneranwälten bundesweit.",
+      icon: Users,
+      stat: "50+"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-blue-900 to-blue-800 pt-20 pb-32 px-6 overflow-hidden">
+    <>
+      {/* JSON-LD Structured Data */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+
+    <div className="min-h-screen bg-slate-50">
+      {/* Hero Section - Dark Slate Theme */}
+      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-20 pb-32 px-6 overflow-hidden">
+        {/* Video Background */}
+        <div className="absolute inset-0 z-0">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover opacity-50"
+          >
+            <source src="/hero_verkehrsrecht.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/60 to-slate-800/80" />
+        </div>
+
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 z-0 opacity-[0.03]">
+          <div className="w-full h-full" style={{
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px'
+          }}></div>
+        </div>
+
+        {/* Floating Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            animate={{ y: [0, -20, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-1/4 left-[10%] w-64 h-64 bg-teal-500/10 rounded-full blur-3xl"
+          />
+          <motion.div
+            animate={{ y: [0, 20, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-1/4 right-[10%] w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"
+          />
+        </div>
+
         <div className="max-w-6xl mx-auto text-center relative z-10">
+          {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-400/20 text-teal-300 text-xs font-bold mb-6"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-teal-300 text-xs font-bold mb-8"
           >
             <Car size={14} /> VERKEHRSRECHT
           </motion.div>
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
+
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight"
+            className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight"
           >
             Bußgeldbescheid erhalten? <br />
-            <span className="text-teal-300">Einspruch einlegen.</span>
+            <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
+              Einspruch einlegen.
+            </span>
           </motion.h1>
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-lg text-white/70 max-w-2xl mx-auto mb-12"
+            className="text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto mb-10"
           >
-            Jeder dritte Bußgeldbescheid ist fehlerhaft. Lassen Sie Ihren Bescheid prüfen statt vorschnell zu bezahlen. Kostenfrei & unverbindlich.
+            Jeder dritte Bußgeldbescheid ist fehlerhaft. Lassen Sie Ihren Bescheid kostenlos prüfen.
           </motion.p>
 
+          {/* Trust Badges */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-wrap justify-center items-center gap-6 mb-12"
+          >
+            <div className="flex items-center gap-3 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-5 py-2">
+              <img src="/tuev-siegel.webp" alt="TÜV" className="w-6 h-6" />
+              <span className="text-slate-300 text-sm font-medium">TÜV geprüft</span>
+            </div>
+            <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
+              <span className="bg-teal-500 text-slate-900 text-xs font-bold px-2 py-0.5 rounded">4,8</span>
+              <span className="text-teal-400">★</span>
+              <span>Trustpilot</span>
+            </div>
+            <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
+              <CheckCircle2 size={16} className="text-teal-400" />
+              <span>20.000+ Kunden</span>
+            </div>
+          </motion.div>
+
+          {/* Chat Interface */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.25 }}
           >
             <ChatInterface />
           </motion.div>
         </div>
       </section>
 
-      {/* Steps Section */}
-      <section className="py-24 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-16">In 3 einfachen Schritten zu Ihrem Recht</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {steps.map((step, i) => (
-              <div key={i} className="flex flex-col items-center text-center gap-6">
-                <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
-                  <step.icon size={32} />
-                </div>
-                <div className="space-y-2">
-                  <h3 className="font-bold text-xl text-gray-900">{step.title}</h3>
-                  <p className="text-gray-500 leading-relaxed">{step.description}</p>
-                </div>
+      {/* Stats Banner - Glassmorphism */}
+      <section className="py-8 px-6 relative -mt-16 z-20">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 shadow-2xl"
+          >
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              <div>
+                <div className="text-4xl font-bold text-teal-400 mb-2">95%</div>
+                <div className="text-sm text-slate-400">Erfolgsquote</div>
               </div>
-            ))}
-          </div>
+              <div>
+                <div className="text-4xl font-bold text-teal-400 mb-2">24h</div>
+                <div className="text-sm text-slate-400">Prüfzeit</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold text-teal-400 mb-2">50+</div>
+                <div className="text-sm text-slate-400">Anwälte</div>
+              </div>
+              <div>
+                <div className="text-4xl font-bold text-teal-400 mb-2">€0</div>
+                <div className="text-sm text-slate-400">Vorkosten</div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Topics Grid */}
-      <section className="py-24 px-6 bg-gray-50">
+      {/* Steps Section - Modern Cards */}
+      <section className="py-24 px-6 bg-slate-50">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Gut beraten bei verkehrsrechtlichen Anliegen</h2>
-            <p className="text-gray-500">Wir helfen Ihnen bei allen gängigen Verstößen im Straßenverkehr.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {topics.map((topic, i) => (
-              <motion.div 
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">In 3 Schritten zu Ihrem Recht</h2>
+            <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+              So einfach funktioniert unsere kostenlose Prüfung.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {steps.map((step, i) => (
+              <motion.div
                 key={i}
-                whileHover={{ y: -5 }}
-                className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 flex gap-6"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15 }}
+                className="relative"
               >
-                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 shrink-0">
-                  <topic.icon size={24} />
+                {/* Card */}
+                <div className="bg-white p-8 rounded-3xl shadow-lg border border-slate-100 h-full hover:shadow-xl transition-shadow duration-300">
+                  <div className="w-16 h-16 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg">
+                    <step.icon size={32} />
+                  </div>
+                  <div className="absolute top-6 right-8 text-6xl font-bold text-slate-100">{i + 1}</div>
+                  <h3 className="font-bold text-xl text-slate-900 mb-3">{step.title}</h3>
+                  <p className="text-slate-500 leading-relaxed">{step.description}</p>
                 </div>
-                <div>
-                  <h3 className="font-bold text-xl mb-2">{topic.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{topic.description}</p>
-                </div>
+                {/* Connector */}
+                {i < steps.length - 1 && (
+                  <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                    <ArrowRight className="text-teal-400" size={24} />
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FAQ Section (Simplified) */}
-      <section className="py-24 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-16">Häufige Fragen zum Bußgeld</h2>
-          <div className="space-y-8">
-            <div className="p-6 bg-gray-50 rounded-2xl">
-              <h4 className="font-bold text-lg mb-2">Wie lange habe ich Zeit für einen Einspruch?</h4>
-              <p className="text-gray-600 text-sm">Nachdem Ihnen der Bußgeldbescheid zugestellt wurde, haben Sie 14 Tage Zeit, um Einspruch einzulegen. Die Frist beginnt ab dem Tag der postalen Zustellung.</p>
-            </div>
-            <div className="p-6 bg-gray-50 rounded-2xl">
-              <h4 className="font-bold text-lg mb-2">Was kostet die Prüfung?</h4>
-              <p className="text-gray-600 text-sm">Unser Service beginnt immer mit einem kostenlosen Bußgeldcheck. Wenn Sie eine Rechtsschutzversicherung haben, ist der komplette Service zu 100% kostenlos für Sie.</p>
-            </div>
-            <div className="p-6 bg-gray-50 rounded-2xl">
-              <h4 className="font-bold text-lg mb-2">Wie funktioniert der Fotocheck?</h4>
-              <p className="text-gray-600 text-sm">Unsere KI erkennt automatisch alle wichtigen Informationen wie Tatort, Messgerät oder Geschwindigkeit. Sie erhalten sofort eine Einschätzung, ob sich ein Einspruch lohnt.</p>
-            </div>
+      {/* Topics Grid - Glassmorphism Cards */}
+      <section className="py-24 px-6 bg-gradient-to-b from-slate-900 to-slate-950">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-white mb-4">Welche Verstöße wir behandeln</h2>
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+              Wir helfen Ihnen bei allen gängigen Verkehrsverstößen.
+            </p>
+          </motion.div>
+
+          {/* Carousel Navigation */}
+          <div className="flex justify-end gap-2 mb-6">
+            <button
+              onClick={() => scroll('left')}
+              className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <button
+              onClick={() => scroll('right')}
+              className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
+            >
+              <ArrowRight size={20} />
+            </button>
+          </div>
+
+          {/* Carousel Container */}
+          <div
+            ref={carouselRef}
+            className="flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide"
+            style={{ scrollBehavior: 'smooth' }}
+          >
+            {topics.map((topic, i) => (
+              <Link key={i} to={topic.link} className="shrink-0 snap-start">
+                <motion.div
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, duration: 0.5 }}
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  className="group relative bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all duration-300 overflow-hidden cursor-pointer w-[380px] shrink-0"
+                >
+                  {/* Gradient overlay on hover */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${topic.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
+
+                  <div className="relative z-10 flex items-start gap-6">
+                    <div className={`w-14 h-14 bg-gradient-to-br ${topic.color} rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0`}>
+                      <topic.icon size={28} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-xl text-white mb-2 group-hover:text-teal-300 transition-colors">{topic.title}</h3>
+                      <p className="text-slate-400 text-sm leading-relaxed">{topic.description}</p>
+                    </div>
+                  </div>
+
+                  <motion.div
+                    className="absolute bottom-4 right-4 w-8 h-8 rounded-full bg-teal-500/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
+                    whileHover={{ scale: 1.1 }}
+                  >
+                    <ArrowRight size={16} className="text-teal-400" />
+                  </motion.div>
+                </motion.div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* Advantages Section - Parallax Style */}
+      <section className="py-24 px-6 bg-slate-50">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-slate-900 mb-4">Warum helpcheck?</h2>
+            <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+              Ihre Vorteile auf einen Blick.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {advantages.map((adv, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -8 }}
+                className="bg-white p-8 rounded-3xl shadow-lg border border-slate-100 text-center hover:shadow-xl transition-all duration-300"
+              >
+                <div className="text-5xl font-bold text-teal-500 mb-3">{adv.stat}</div>
+                <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-700 mx-auto mb-4">
+                  <adv.icon size={24} />
+                </div>
+                <h3 className="font-bold text-lg text-slate-900 mb-2">{adv.title}</h3>
+                <p className="text-slate-500 text-sm leading-relaxed">{adv.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Banner */}
+      <section className="py-20 px-6 bg-gradient-to-r from-slate-900 to-slate-800">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Bußgeldbescheid erhalten?
+            </h2>
+            <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
+              Lassen Sie jetzt kostenlos prüfen, ob Sie Einspruch einlegen können.
+              Kein Risiko – Sie zahlen nur im Erfolgsfall.
+            </p>
+            <Link to="/">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-teal-400 to-cyan-400 text-slate-900 font-bold py-4 px-10 rounded-full shadow-lg shadow-teal-400/25 hover:shadow-teal-400/40 transition-all inline-flex items-center gap-2"
+              >
+                Kostenlos prüfen <ArrowRight size={20} />
+              </motion.button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <FAQSection id="faq" title="Häufige Fragen zum Verkehrsrecht" faqs={verkehrsrechtFAQs} />
     </div>
+    </>
   );
 }
-
-// Re-using Zap from Home if needed, but I'll import it or use a local one
-const Zap = ({ size }: { size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-);
