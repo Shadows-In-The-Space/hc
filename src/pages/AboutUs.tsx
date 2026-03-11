@@ -31,9 +31,9 @@ export default function AboutUs() {
   ];
 
   const team = [
-    { name: "Dr. Marcus Weber", role: "Geschäftsführer & Rechtsanwalt", image: "/team-1.webp" },
-    { name: "Sarah Schmidt", role: "Leitung Kundenbetreuung", image: "/team-2.webp" },
-    { name: "Thomas Müller", role: "Technischer Leiter", image: "/team-3.webp" }
+    { name: "Dr. Frank Breitschwerdt", role: "Geschäftsführer", image: "/team-1.avif" },
+    { name: "Marc-André Rödder", role: "Leiter Produktteam", image: "/team-2.avif" },
+    { name: "Daniel Monjean", role: "Leiter Kundenservice", image: "/team-3.avif" }
   ];
 
   return (
