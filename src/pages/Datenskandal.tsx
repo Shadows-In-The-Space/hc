@@ -232,7 +232,7 @@ export default function Datenskandal() {
 
           <div
             ref={carouselRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide"
+            className="flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide carousel-smooth"
           >
             {dataBreaches.map((breach, i) => (
               <Link key={i} to={breach.link} className="shrink-0 snap-start">
@@ -242,21 +242,35 @@ export default function Datenskandal() {
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.5 }}
                   whileHover={{ y: -5, scale: 1.02 }}
-                  className="group relative bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all duration-300 overflow-hidden cursor-pointer w-[400px] shrink-0"
+                  className="group relative bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all duration-300 overflow-hidden cursor-pointer w-[380px] h-[280px] shrink-0 flex flex-col justify-between"
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-br ${breach.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
+                  {/* Blurred background image */}
+                  <div className="absolute inset-0 z-0">
+                    <img
+                      src="/card-datenschutz.jpeg"
+                      alt=""
+                      className="w-full h-full object-cover opacity-20 blur-sm scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/70 to-transparent" />
+                  </div>
 
-                  <div className="relative z-10">
-                    <div className={`w-14 h-14 bg-gradient-to-br ${breach.color} rounded-2xl flex items-center justify-center text-white shadow-lg mb-6`}>
-                      <breach.icon size={28} />
+                  <div className={`absolute inset-0 bg-gradient-to-br ${breach.color} opacity-0 group-hover:opacity-15 transition-opacity duration-300 z-10`} />
+
+                  <div className="relative z-20">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${breach.color} rounded-xl flex items-center justify-center text-white shadow-lg mb-4`}>
+                      <breach.icon size={24} />
                     </div>
-                    <div className="text-blue-400 text-sm font-bold mb-2">{breach.stats}</div>
-                    <h3 className="font-bold text-xl text-white mb-3 group-hover:text-blue-300 transition-colors">{breach.title}</h3>
-                    <p className="text-slate-400 text-sm leading-relaxed mb-4">{breach.description}</p>
-                    <div className="flex items-center gap-2 text-blue-400 text-sm font-medium">
-                      <span>Jetzt prüfen</span>
-                      <ChevronRight size={16} />
-                    </div>
+                    <div className="text-blue-400 text-sm font-bold mb-1">{breach.stats}</div>
+                    <h3 className="font-bold text-lg text-white mb-1 group-hover:text-blue-300 transition-colors">{breach.title}</h3>
+                  </div>
+
+                  <div className="relative z-20">
+                    <p className="text-slate-300 text-sm leading-relaxed line-clamp-2">{breach.description}</p>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-blue-400 text-sm font-medium relative z-20">
+                    <span>Jetzt prüfen</span>
+                    <ChevronRight size={16} />
                   </div>
                 </motion.div>
               </Link>

@@ -353,7 +353,7 @@ export default function Verkehrsrecht() {
           {/* Carousel Container */}
           <div
             ref={carouselRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide"
+            className="flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide carousel-smooth"
             style={{ scrollBehavior: 'smooth' }}
           >
             {topics.map((topic, i) => (
@@ -364,19 +364,32 @@ export default function Verkehrsrecht() {
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.5 }}
                   whileHover={{ y: -5, scale: 1.02 }}
-                  className="group relative bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all duration-300 overflow-hidden cursor-pointer w-[380px] shrink-0"
+                  className="group relative bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all duration-300 overflow-hidden cursor-pointer w-[380px] h-[220px] shrink-0 flex flex-col justify-between"
                 >
-                  {/* Gradient overlay on hover */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${topic.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
+                  {/* Blurred background image */}
+                  <div className="absolute inset-0 z-0">
+                    <img
+                      src="/card-verkehr.jpeg"
+                      alt=""
+                      className="w-full h-full object-cover opacity-20 blur-sm scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/70 to-transparent" />
+                  </div>
 
-                  <div className="relative z-10 flex items-start gap-6">
-                    <div className={`w-14 h-14 bg-gradient-to-br ${topic.color} rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0`}>
-                      <topic.icon size={28} />
+                  {/* Gradient overlay on hover */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${topic.color} opacity-0 group-hover:opacity-15 transition-opacity duration-300 z-10`} />
+
+                  <div className="relative z-20 flex items-start gap-4">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${topic.color} rounded-xl flex items-center justify-center text-white shadow-lg shrink-0`}>
+                      <topic.icon size={24} />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-bold text-xl text-white mb-2 group-hover:text-teal-300 transition-colors">{topic.title}</h3>
-                      <p className="text-slate-400 text-sm leading-relaxed">{topic.description}</p>
+                      <h3 className="font-bold text-lg text-white mb-1 group-hover:text-teal-300 transition-colors">{topic.title}</h3>
                     </div>
+                  </div>
+
+                  <div className="relative z-20">
+                    <p className="text-slate-300 text-sm leading-relaxed line-clamp-2">{topic.description}</p>
                   </div>
 
                   <motion.div

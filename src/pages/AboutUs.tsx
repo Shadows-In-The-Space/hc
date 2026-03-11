@@ -112,6 +112,29 @@ export default function AboutUs() {
       </section>
 
       <section className="py-24 px-6 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">Unser Team</h2>
+            <p className="text-slate-500 max-w-xl mx-auto">Erfahrene Experten an Ihrer Seite.</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {team.map((member, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className="text-center">
+                <div className="relative mb-6 mx-auto w-40 h-40">
+                  <img src={member.image} alt={member.name} className="w-full h-full object-cover rounded-full border-4 border-teal-500 shadow-lg" />
+                  <div className="absolute inset-0 rounded-full ring-2 ring-teal-400/30" />
+                </div>
+                <h3 className="font-bold text-xl text-slate-900 mb-1">{member.name}</h3>
+                <p className="text-teal-600 font-medium text-sm">{member.role}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Kontakt</h2>
