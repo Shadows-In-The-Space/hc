@@ -17,6 +17,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI } from "@google/genai";
 import { Link } from 'react-router-dom';
+import { ChatInterface } from '../components/chatbot';
 
 // --- Types ---
 interface Message {
@@ -24,9 +25,9 @@ interface Message {
   content: string;
 }
 
-// --- Components ---
+// --- Components (using imported ChatInterface from chatbot) ---
 
-export const ChatInterface = () => {
+const OldChatInterface = () => {
   const [messages, setMessages] = useState<Message[]>([
     { role: 'assistant', content: 'Willkommen bei helpcheck! Ich helfe Ihnen, Ihre Ansprüche bei Verkehrsverstößen oder Datenlecks zu prüfen. Welches Anliegen haben Sie?' }
   ]);

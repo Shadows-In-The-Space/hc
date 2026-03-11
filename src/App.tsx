@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { 
-  ChevronDown, 
+import {
+  ChevronDown,
   Facebook,
   Instagram,
   Twitter,
   Bot
 } from 'lucide-react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import Home from './pages/Home';
 import Verkehrsrecht from './pages/Verkehrsrecht';
+import { ChatProvider, FloatingWidget } from './components/chatbot';
 
 // --- Shared Components ---
 
@@ -137,20 +138,35 @@ const CookieBanner = () => {
   );
 };
 
+// Wrapper component for routes to handle floating widget visibility
+const AppContent: React.FC = () => {
+  const location = useLocation();
+  const isSpecialPage = location.pathname === '/' || location.pathname === '/verkehrsrecht';
+
+  return (
+    <div className="min-h-screen bg-gray-50 font-sans text-gray-900 selection:bg-teal-100">
+      <Navbar />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/verkehrsrecht" element={<Verkehrsrecht />} />
+      </Routes>
+
+      {/* Floating Widget on other pages */}
+      {!isSpecialPage && <FloatingWidget />}
+
+      <Footer />
+      <CookieBanner />
+    </div>
+  );
+};
+
 export default function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50 font-sans text-gray-900 selection:bg-teal-100">
-        <Navbar />
-        
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/verkehrsrecht" element={<Verkehrsrecht />} />
-        </Routes>
-
-        <Footer />
-        <CookieBanner />
-      </div>
-    </Router>
+    <ChatProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </ChatProvider>
   );
 }

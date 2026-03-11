@@ -10,7 +10,7 @@ import {
   Upload,
   HelpCircle
 } from 'lucide-react';
-import { ChatInterface } from './Home';
+import { ChatInterface } from '../components/chatbot';
 
 export default function Verkehrsrecht() {
   const steps = [
