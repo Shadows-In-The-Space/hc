@@ -33,6 +33,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setLead,
     isDataLeakCheck,
     setIsDataLeakCheck,
+    uploadedFiles,
+    setUploadedFiles,
   } = useChat();
 
   const [input, setInput] = useState('');
@@ -46,6 +48,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     const file = e.target.files?.[0];
     if (file) {
       setUploadedFile(file);
+      // Auch im Context speichern für LeadForm
+      setUploadedFiles([...uploadedFiles, file]);
       addMessage({
         role: 'user',
         content: `📎 Datei hochgeladen: ${file.name}`,

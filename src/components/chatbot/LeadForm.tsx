@@ -32,7 +32,7 @@ const API_ENDPOINTS = {
  * Lead-Formular Komponente
  */
 export const LeadForm: React.FC = () => {
-  const { setCurrentStep, setLead, messages } = useChat();
+  const { setCurrentStep, setLead, messages, uploadedFiles } = useChat();
   const [formData, setFormData] = useState<Partial<Lead>>({
     name: '',
     email: '',
@@ -86,6 +86,7 @@ export const LeadForm: React.FC = () => {
         topic: formData.topic || 'allgemein',
         message: formData.description || '',
         source: 'chatbot',
+        files: uploadedFiles,
       });
 
       setLead(formData as Lead);

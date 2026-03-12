@@ -11,6 +11,7 @@ export interface LeadPayload {
   topic?: string;
   message?: string;
   source?: string;
+  files?: File[];
 }
 
 export interface Lead {
@@ -30,6 +31,33 @@ export interface Lead {
  * Submit a lead to the backend
  */
 export async function submitLead(lead: LeadPayload): Promise<Lead> {
+  // Wenn Dateien vorhanden, nutze FormData
+  if (lead.files && lead.files.length > 0) {
+    const formData = new FormData();
+    formData.append('name', lead.name || '');
+    formData.append('email', lead.email);
+    formData.append('phone', lead.phone || '');
+    formData.append('topic', lead.topic || '');
+    formData.append('message', lead.message || '');
+    formData.append('source', lead.source || 'chatbot');
+
+    lead.files.forEach((file) => {
+      formData.append('files', file);
+    });
+
+    const response = await fetch(`${API_BASE_URL}/api/leads`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to submit lead');
+    }
+
+    return response.json();
+  }
+
+  // Ohne Dateien: JSON Request
   const response = await fetch(`${API_BASE_URL}/api/leads`, {
     method: 'POST',
     headers: {

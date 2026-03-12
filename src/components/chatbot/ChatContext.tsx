@@ -9,6 +9,7 @@ export interface Lead {
   description: string;
   appointmentDate?: string;
   appointmentTime?: string;
+  files?: File[];
 }
 
 export interface ChatState {
@@ -18,6 +19,7 @@ export interface ChatState {
   lead: Lead | null;
   currentStep: 'greeting' | 'chat' | 'lead' | 'appointment' | 'done';
   isDataLeakCheck: boolean;
+  uploadedFiles: File[];
 }
 
 export interface Message {
@@ -35,6 +37,7 @@ interface ChatContextType extends ChatState {
   setLead: (lead: Lead | null) => void;
   setCurrentStep: (step: ChatState['currentStep']) => void;
   setIsDataLeakCheck: (value: boolean) => void;
+  setUploadedFiles: (files: File[]) => void;
   resetChat: () => void;
 }
 
@@ -46,7 +49,8 @@ const initialState: ChatState = {
   ],
   lead: null,
   currentStep: 'greeting',
-  isDataLeakCheck: false
+  isDataLeakCheck: false,
+  uploadedFiles: []
 };
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -78,6 +82,10 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setState(prev => ({ ...prev, isDataLeakCheck }));
   }, []);
 
+  const setUploadedFiles = useCallback((uploadedFiles: File[]) => {
+    setState(prev => ({ ...prev, uploadedFiles }));
+  }, []);
+
   const resetChat = useCallback(() => {
     setState(initialState);
   }, []);
@@ -93,6 +101,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setLead,
       setCurrentStep,
       setIsDataLeakCheck,
+      setUploadedFiles,
       resetChat
     }}>
       {children}
