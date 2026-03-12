@@ -77,7 +77,7 @@ export default function ArticleCard({
           ease: "easeOut",
           hover: { duration: 0.2 }
         }}
-        className={`group relative bg-slate-900/80 backdrop-blur-2xl border ${borderColor} ${hoverBorder} rounded-2xl p-6 overflow-hidden transition-all duration-300 h-full shadow-xl shadow-black/20`}
+        className={`group relative bg-slate-900/80 backdrop-blur-2xl border ${borderColor} ${hoverBorder} rounded-2xl p-6 overflow-hidden transition-all duration-300 h-full min-h-[320px] shadow-xl shadow-black/20`}
       >
         {/* Dark blurred background layers */}
         <div className="absolute inset-0 z-0">
@@ -123,7 +123,7 @@ export default function ArticleCard({
             >
               <Icon size={22} />
             </motion.div>
-            <div className="flex items-center gap-1.5 text-slate-400 text-sm bg-white/5 px-2 py-1 rounded-full">
+            <div className="flex items-center gap-1.5 text-teal-400/80 text-sm bg-white/5 px-2 py-1 rounded-full">
               <Clock size={14} />
               <span>{readTime}</span>
             </div>
@@ -146,7 +146,7 @@ export default function ArticleCard({
           </h3>
 
           {/* Excerpt */}
-          <p className="text-slate-400 text-sm mb-4 line-clamp-2 flex-grow leading-relaxed">
+          <p className="text-teal-100/80 text-sm mb-4 line-clamp-2 flex-grow leading-relaxed">
             {excerpt}
           </p>
 

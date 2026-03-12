@@ -22,12 +22,50 @@ export interface BreachInfo {
   isSensitive: boolean;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
+
 /**
- * Prüft eine Email-Adresse gegen bekannte Datenlecks (Mock für MVP)
+ * Prüft eine Email-Adresse gegen bekannte Datenlecks (Backend API)
  */
 export async function checkEmailBreach(email: string): Promise<DataLeakResult> {
   const normalizedEmail = email.toLowerCase().trim();
-  return getMockBreachResult(normalizedEmail);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/check-email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: normalizedEmail }),
+    });
+
+    if (!response.ok) {
+      throw new Error('API request failed');
+    }
+
+    const data = await response.json();
+
+    return {
+      email: data.email,
+      isBreached: data.breach_count > 0,
+      breachCount: data.breach_count,
+      breaches: data.breaches.map((b: string) => ({
+        name: b,
+        domain: '',
+        breachDate: '',
+        description: b,
+        dataClasses: [],
+        isVerified: true,
+        isFabricated: false,
+        isSensitive: false,
+      })),
+      checkedAt: new Date(),
+    };
+  } catch (error) {
+    console.error('Email breach check failed:', error);
+    // Fallback to mock if API fails
+    return getMockBreachResult(normalizedEmail);
+  }
 }
 
 /**

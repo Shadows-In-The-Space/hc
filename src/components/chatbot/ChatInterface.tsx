@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  Send, X, Bot, User, Car, Shield, Loader2
+  Send, X, Bot, User, Car, Shield, Loader2, Sparkles, Paperclip, FileText
 } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 import { useChat, Message } from './ChatContext';
@@ -37,8 +37,22 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedFile(file);
+      addMessage({
+        role: 'user',
+        content: `📎 Datei hochgeladen: ${file.name}`,
+        timestamp: new Date()
+      });
+    }
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -141,60 +155,278 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
-  if (position === 'hero' && !isOpen) {
+  // Hero Position - Modern Design mit intensivem Glassmorphism
+  if (position === 'hero') {
     return (
-      <div className="w-full max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Wie können wir Ihnen helfen?</h2>
-          <p className="text-white/70">Wählen Sie ein Thema oder stellen Sie uns Ihre Frage</p>
+      <motion.div
+        initial={{ opacity: 0, y: 30, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-3xl mx-auto"
+      >
+        {/* Glassmorphism Container mit Glow-Effekt */}
+        <div className="relative">
+          {/* Glow Effect */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-teal-400/30 via-cyan-400/30 to-blue-400/30 rounded-3xl blur-xl opacity-70" />
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="relative bg-white/70 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/40 overflow-hidden flex flex-col"
+            style={{ maxHeight: '560px' }}
+          >
+            {/* Glass Header mit subtle Gradient */}
+            <div className="p-5 flex items-center justify-between bg-gradient-to-r from-slate-900/90 via-slate-800/90 to-slate-900/90 backdrop-blur-xl border-b border-white/10">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    className="w-12 h-12 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg shadow-teal-500/40"
+                  >
+                    <Sparkles className="w-6 h-6 text-white" />
+                  </motion.div>
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.7, 1, 0.7] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-400 rounded-full border-2 border-slate-900 shadow-lg shadow-green-400/50"
+                  />
+                </div>
+                <div>
+                  <h3 className="text-white font-bold text-lg tracking-wide">helpcheck Assistent</h3>
+                  <p className="text-teal-300/90 text-xs flex items-center gap-2">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-400"></span>
+                    </span>
+                    Online - Wir helfen Ihnen gerne
+                  </p>
+                </div>
+              </div>
+              {/* Schließen Button */}
+              <motion.button
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={closeChat}
+                className="w-9 h-9 rounded-full hover:bg-white/20 flex items-center justify-center transition-colors"
+              >
+                <X className="w-5 h-5 text-white" />
+              </motion.button>
+            </div>
+
+          {/* Messages Area mit Glassmorphism */}
+          <div
+            ref={scrollRef}
+            className="flex-1 overflow-y-auto p-5 space-y-4 bg-gradient-to-b from-transparent via-white/20 to-transparent backdrop-blur-sm"
+            style={{ maxHeight: '360px' }}
+          >
+            {messages.map((msg, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+              >
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                  msg.role === 'user'
+                    ? 'bg-gradient-to-br from-blue-500 to-blue-600'
+                    : 'bg-gradient-to-br from-teal-400 to-cyan-500'
+                }`}>
+                  {msg.role === 'user'
+                    ? <User className="w-4 h-4 text-white" />
+                    : <Sparkles className="w-4 h-4 text-white" />
+                  }
+                </div>
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className={`max-w-[80%] p-4 rounded-2xl ${
+                    msg.role === 'user'
+                      ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-br-md shadow-lg shadow-blue-500/20'
+                      : 'bg-white/80 backdrop-blur-sm border border-white/50 text-slate-800 rounded-bl-md shadow-lg shadow-black/5'
+                  }`}>
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                </motion.div>
+              </motion.div>
+            ))}
+            {isLoading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex gap-3"
+              >
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                <div className="bg-white border border-slate-100 p-4 rounded-2xl rounded-bl-sm shadow-sm">
+                  <div className="flex gap-1">
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                      className="w-2 h-2 bg-teal-500 rounded-full"
+                    />
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 1, repeat: Infinity, delay: 0.15 }}
+                      className="w-2 h-2 bg-teal-500 rounded-full"
+                    />
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                      transition={{ duration: 1, repeat: Infinity, delay: 0.3 }}
+                      className="w-2 h-2 bg-teal-500 rounded-full"
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </div>
+
+          {/* Glass Input Area */}
+          <div className="p-4 border-t border-white/20 bg-white/40 backdrop-blur-md">
+            {/* File Upload Preview */}
+            {uploadedFile && (
+              <div className="mb-3 flex items-center gap-2 p-2 bg-teal-50 rounded-lg">
+                <FileText className="w-5 h-5 text-teal-600" />
+                <span className="flex-1 text-sm text-teal-700 truncate">{uploadedFile.name}</span>
+                <button onClick={() => setUploadedFile(null)} className="text-teal-500 hover:text-teal-700">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              {/* Upload Button */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileUpload}
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                className="hidden"
+              />
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => fileInputRef.current?.click()}
+                className="w-14 h-14 bg-slate-100 hover:bg-slate-200 rounded-2xl flex items-center justify-center text-slate-600 transition-all"
+              >
+                <Paperclip className="w-5 h-5" />
+              </motion.button>
+
+              <motion.input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSend()}
+                placeholder="Nachricht eingeben..."
+                whileFocus={{ scale: 1.01 }}
+                className="flex-1 px-5 py-3.5 bg-white/60 backdrop-blur-sm border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:bg-white/80 transition-all text-sm shadow-inner"
+              />
+              <motion.button
+                onClick={() => handleSend()}
+                disabled={!input.trim() || isLoading}
+                whileHover={{ scale: 1.08, boxShadow: "0 10px 40px -10px rgba(20, 184, 166, 0.5)" }}
+                whileTap={{ scale: 0.95 }}
+                className="w-14 h-14 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              >
+                <Send className="w-5 h-5" />
+              </motion.button>
+            </div>
+            <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+              {QUICK_ACTIONS.map((action, index) => (
+                <motion.button
+                  key={action.id}
+                  onClick={() => handleQuickAction(action.id)}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 + index * 0.1 }}
+                  whileHover={{ scale: 1.05, y: -2, boxShadow: "0 10px 30px -10px rgba(20, 184, 166, 0.3)" }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-4 py-2 bg-white/70 backdrop-blur-sm border border-white/40 text-slate-700 text-sm font-medium rounded-full hover:bg-teal-50/80 hover:border-teal-300/50 hover:text-teal-700 transition-all shadow-md shadow-black/5 whitespace-nowrap"
+                >
+                  {action.label}
+                </motion.button>
+              ))}
+            </div>
+          </div>
+          </motion.div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {QUICK_ACTIONS.map(action => (
-            <button key={action.id} onClick={() => handleQuickAction(action.id)} className="p-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl hover:bg-white/20 transition-all group text-left">
-              <action.icon className="w-8 h-8 text-teal-400 mb-3 group-hover:scale-110 transition-transform" />
-              <span className="text-white font-medium block">{action.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+      </motion.div>
     );
   }
 
+  // Widget/Overlay Position mit Glassmorphism
   return (
-    <div className={`${isFloating ? 'w-full h-full' : 'max-w-2xl mx-auto'} bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col`}>
-      <div className="p-4 flex items-center justify-between border-b border-gray-100 bg-gradient-to-r from-blue-900 to-blue-800">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      className={`${isFloating ? 'w-full h-full' : 'max-w-2xl mx-auto'} bg-white/80 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/30 overflow-hidden flex flex-col`}
+    >
+      {/* Glass Header */}
+      <div className="p-4 flex items-center justify-between bg-gradient-to-r from-slate-900/90 via-slate-800/90 to-slate-900/90 backdrop-blur-xl border-b border-white/10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-            <Bot className="w-5 h-5 text-white" />
+          <div className="relative">
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              className="w-10 h-10 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-teal-500/30"
+            >
+              <Sparkles className="w-5 h-5 text-white" />
+            </motion.div>
+            <motion.div
+              animate={{ scale: [1, 1.2, 1], opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-400 rounded-full border-2 border-slate-800 shadow-lg shadow-green-400/50"
+            />
           </div>
           <div>
             <h3 className="text-white font-bold">helpcheck Assistent</h3>
-            <p className="text-white/70 text-xs">Online • Schnelle Antwort</p>
+            <p className="text-teal-300/90 text-xs">Online • Schnelle Antwort</p>
           </div>
         </div>
-        <button onClick={closeChat} className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors">
+        <motion.button
+          whileHover={{ scale: 1.1, rotate: 90 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={closeChat}
+          className="w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition-colors"
+        >
           <X className="w-5 h-5 text-white" />
-        </button>
+        </motion.button>
       </div>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50" style={{ maxHeight: '400px' }}>
+      {/* Glass Messages Area */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-transparent backdrop-blur-sm" style={{ maxHeight: '400px' }}>
         {messages.map((msg, index) => (
           <motion.div key={index} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'user' ? 'bg-blue-100' : 'bg-teal-100'}`}>
-              {msg.role === 'user' ? <User className="w-4 h-4 text-blue-600" /> : <Bot className="w-4 h-4 text-teal-600" />}
+            <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+              msg.role === 'user'
+                ? 'bg-gradient-to-br from-blue-500 to-blue-600'
+                : 'bg-gradient-to-br from-teal-400 to-cyan-500'
+            }`}>
+              {msg.role === 'user' ? <User className="w-4 h-4 text-white" /> : <Sparkles className="w-4 h-4 text-white" />}
             </div>
-            <div className={`max-w-[75%] p-4 rounded-2xl ${msg.role === 'user' ? 'bg-blue-900 text-white rounded-br-md' : 'bg-white border border-gray-100 text-gray-800 rounded-bl-md'}`}>
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className={`max-w-[75%] p-4 rounded-2xl ${
+                msg.role === 'user'
+                  ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-br-md shadow-lg shadow-blue-500/20'
+                  : 'bg-white/80 backdrop-blur-sm border border-white/50 text-gray-800 rounded-bl-md shadow-md'
+              }`}>
               <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-            </div>
+            </motion.div>
           </motion.div>
         ))}
         {isLoading && (
           <div className="flex gap-3">
-            <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
-              <Bot className="w-4 h-4 text-teal-600" />
+            <div className="w-8 h-8 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-xl flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-white" />
             </div>
-            <div className="bg-white border border-gray-100 p-4 rounded-2xl rounded-bl-md">
-              <Loader2 className="w-5 h-5 text-teal-600 animate-spin" />
+            <div className="bg-white border border-gray-100 p-4 rounded-2xl rounded-bl-sm">
+              <div className="flex gap-1">
+                <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ duration: 1, repeat: Infinity }} className="w-2 h-2 bg-teal-500 rounded-full" />
+                <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ duration: 1, repeat: Infinity, delay: 0.15 }} className="w-2 h-2 bg-teal-500 rounded-full" />
+                <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }} transition={{ duration: 1, repeat: Infinity, delay: 0.3 }} className="w-2 h-2 bg-teal-500 rounded-full" />
+              </div>
             </div>
           </div>
         )}
@@ -202,28 +434,43 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
       <AnimatePresence>
         {currentStep === 'lead' && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="border-t border-gray-100">
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="border-t border-white/20">
             <LeadForm />
           </motion.div>
         )}
         {currentStep === 'appointment' && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="border-t border-gray-100">
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="border-t border-white/20">
             <AppointmentBooking />
           </motion.div>
         )}
       </AnimatePresence>
 
       {currentStep !== 'lead' && currentStep !== 'appointment' && (
-        <div className="p-4 border-t border-gray-100 bg-white">
+        <div className="p-4 border-t border-white/20 bg-white/40 backdrop-blur-md">
           <div className="flex gap-2">
-            <input ref={inputRef} type="text" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSend()} placeholder="Nachricht eingeben..." className="flex-1 px-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-400" />
-            <button onClick={() => handleSend()} disabled={!input.trim() || isLoading} className="w-12 h-12 bg-blue-900 rounded-full flex items-center justify-center text-white hover:bg-blue-800 disabled:opacity-50 transition-colors">
+            <motion.input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSend()}
+              placeholder="Nachricht eingeben..."
+              whileFocus={{ scale: 1.01 }}
+              className="flex-1 px-4 py-3 bg-white/60 backdrop-blur-sm border border-white/40 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-400/50 shadow-inner"
+            />
+            <motion.button
+              onClick={() => handleSend()}
+              disabled={!input.trim() || isLoading}
+              whileHover={{ scale: 1.08, boxShadow: "0 10px 30px -10px rgba(20, 184, 166, 0.4)" }}
+              whileTap={{ scale: 0.95 }}
+              className="w-12 h-12 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-full flex items-center justify-center text-white shadow-lg shadow-teal-500/30 hover:shadow-teal-500/50 disabled:opacity-50 transition-all"
+            >
               <Send className="w-5 h-5" />
-            </button>
+            </motion.button>
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

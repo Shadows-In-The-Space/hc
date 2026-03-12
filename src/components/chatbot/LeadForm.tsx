@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Send, Calendar, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import { useChat, Lead } from './ChatContext';
+import { submitLead } from '../../services/api';
 
 // --- CRM API Schnittstelle ---
 export interface CRMLeadPayload {
@@ -77,8 +78,15 @@ export const LeadForm: React.FC = () => {
         timestamp: new Date().toISOString()
       };
 
-      // TODO: Später mit echtem Backend verbinden
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Send to backend API
+      await submitLead({
+        email: formData.email || '',
+        name: formData.name || '',
+        phone: formData.phone || '',
+        topic: formData.topic || 'allgemein',
+        message: formData.description || '',
+        source: 'chatbot',
+      });
 
       setLead(formData as Lead);
       setCurrentStep('appointment');

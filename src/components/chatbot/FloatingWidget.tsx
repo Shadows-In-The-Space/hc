@@ -19,7 +19,7 @@ export const FloatingWidget: React.FC = () => {
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0, opacity: 0 }}
           onClick={toggleChat}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-teal-400 to-blue-500 rounded-full shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center"
+          className="fixed bottom-6 right-6 z-[150] w-14 h-14 bg-gradient-to-br from-teal-400 to-blue-500 rounded-full shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center"
           aria-label="Chat öffnen"
         >
           <MessageCircle className="w-6 h-6 text-white" />

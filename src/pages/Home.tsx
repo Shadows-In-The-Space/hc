@@ -220,7 +220,11 @@ export const AdvantageItem = ({ icon: Icon, title, description }: { icon: any, t
 );
 
 export const TestimonialCard = ({ name, text, image }: { name: string, text: string, image: string }) => (
-  <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-4">
+  <motion.div
+    whileHover={{ y: -4, scale: 1.02 }}
+    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-4"
+  >
     <div className="flex items-center gap-3">
       <img src={image} alt={name} className="w-12 h-12 rounded-full object-cover border-2 border-blue-100" referrerPolicy="no-referrer" />
       <div>
@@ -236,14 +240,14 @@ export const TestimonialCard = ({ name, text, image }: { name: string, text: str
     </div>
     <p className="text-sm italic text-gray-600">"{text}"</p>
     <p className="text-xs font-bold text-gray-900">— {name}</p>
-  </div>
+  </motion.div>
 );
 
 export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-20 pb-32 px-6 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-24 pb-40 px-6 overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
           <video
@@ -315,8 +319,9 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
+            className="mt-8"
           >
-            <ChatInterface />
+            <ChatInterface position="hero" />
           </motion.div>
         </div>
       </section>
@@ -336,16 +341,16 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Traffic Law Card */}
-            <Link to="/verkehrsrecht">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Traffic Law Card - entspricht Chatbot "Bußgeld / Verkehrsrecht" */}
+            <Link to="/verkehrsrecht" onClick={() => window.scrollTo(0, 0)}>
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
                 whileHover={{ y: -8 }}
-                className="group relative h-[400px] rounded-3xl overflow-hidden shadow-xl"
+                className="group relative h-[420px] rounded-3xl overflow-hidden shadow-xl"
               >
                 <video
                   autoPlay
@@ -357,30 +362,30 @@ export default function Home() {
                   <source src="/hero_verkehrsrecht.mp4" type="video/mp4" />
                 </video>
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-8">
-                  <div className="w-14 h-14 bg-teal-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-                    <Car className="text-white" size={28} />
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="w-12 h-12 bg-teal-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                    <Car className="text-white" size={24} />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Verkehrsrecht</h3>
-                  <p className="text-slate-300 mb-4">
+                  <h3 className="text-xl font-bold text-white mb-2">🚗 Bußgeld & Verkehrsrecht</h3>
+                  <p className="text-slate-300 text-sm mb-4">
                     Bußgeldbescheid prüfen, Fahrverbot abwenden und Punkte in Flensburg vermeiden.
                   </p>
                   <span className="inline-flex items-center gap-2 text-teal-400 font-medium group-hover:gap-3 transition-all">
-                    Jetzt prüfen <ArrowRight size={18} />
+                    Jetzt starten <ArrowRight size={16} />
                   </span>
                 </div>
               </motion.div>
             </Link>
 
-            {/* Data Leak Card */}
-            <Link to="/datenskandal">
+            {/* Data Leak Card - entspricht Chatbot "Datenleck prüfen" */}
+            <Link to="/datenskandal" onClick={() => window.scrollTo(0, 0)}>
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
                 whileHover={{ y: -8 }}
-                className="group relative h-[400px] rounded-3xl overflow-hidden shadow-xl"
+                className="group relative h-[420px] rounded-3xl overflow-hidden shadow-xl"
               >
                 <video
                   autoPlay
@@ -392,16 +397,16 @@ export default function Home() {
                   <source src="/Loop_scale_pans_book_flip_3f093c618a.mp4" type="video/mp4" />
                 </video>
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-8">
-                  <div className="w-14 h-14 bg-red-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-                    <ShieldCheck className="text-white" size={28} />
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="w-12 h-12 bg-red-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+                    <ShieldCheck className="text-white" size={24} />
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-2">Datenleck</h3>
-                  <p className="text-slate-300 mb-4">
-                    Prüfen Sie, ob Sie von einem Datenleck betroffen sind und sichern Sie sich Schadensersatz.
+                  <h3 className="text-xl font-bold text-white mb-2">🔒 Datenleck prüfen</h3>
+                  <p className="text-slate-300 text-sm mb-4">
+                    Prüfen Sie, ob Ihre Daten geleakt wurden und sichern Sie sich Schadensersatz.
                   </p>
                   <span className="inline-flex items-center gap-2 text-teal-400 font-medium group-hover:gap-3 transition-all">
-                    Jetzt prüfen <ArrowRight size={18} />
+                    Jetzt starten <ArrowRight size={16} />
                   </span>
                 </div>
               </motion.div>
@@ -431,13 +436,17 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 p-8 rounded-2xl"
+              whileHover={{ y: -8, scale: 1.02 }}
+              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 p-8 rounded-2xl cursor-pointer group"
             >
-              <div className="w-14 h-14 bg-teal-500/10 rounded-2xl flex items-center justify-center mb-6">
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                className="w-14 h-14 bg-teal-500/10 rounded-2xl flex items-center justify-center mb-6 transition-colors group-hover:bg-teal-500/20"
+              >
                 <ShieldCheck className="text-teal-400" size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">Kein Kostenrisiko</h3>
-              <p className="text-slate-400">Wir übernehmen alle Kosten. Sie zahlen nur bei Erfolg – kein Risiko für Sie.</p>
+              </motion.div>
+              <h3 className="text-xl font-bold text-white mb-3 group-hover:text-teal-300 transition-colors">Kein Kostenrisiko</h3>
+              <p className="text-slate-400 group-hover:text-teal-100/80 transition-colors">Wir übernehmen alle Kosten. Sie zahlen nur bei Erfolg – kein Risiko für Sie.</p>
             </motion.div>
 
             <motion.div
@@ -445,13 +454,17 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 p-8 rounded-2xl"
+              whileHover={{ y: -8, scale: 1.02 }}
+              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 p-8 rounded-2xl cursor-pointer group"
             >
-              <div className="w-14 h-14 bg-teal-500/10 rounded-2xl flex items-center justify-center mb-6">
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                className="w-14 h-14 bg-teal-500/10 rounded-2xl flex items-center justify-center mb-6 transition-colors group-hover:bg-teal-500/20"
+              >
                 <CheckCircle2 className="text-teal-400" size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">95% Erfolgsquote</h3>
-              <p className="text-slate-400">Unsere Expertise spricht für sich – hohe Erfolgsquote bei allen Verfahren.</p>
+              </motion.div>
+              <h3 className="text-xl font-bold text-white mb-3 group-hover:text-teal-300 transition-colors">95% Erfolgsquote</h3>
+              <p className="text-slate-400 group-hover:text-teal-100/80 transition-colors">Unsere Expertise spricht für sich – hohe Erfolgsquote bei allen Verfahren.</p>
             </motion.div>
 
             <motion.div
@@ -459,13 +472,17 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.3 }}
-              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 p-8 rounded-2xl"
+              whileHover={{ y: -8, scale: 1.02 }}
+              className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 p-8 rounded-2xl cursor-pointer group"
             >
-              <div className="w-14 h-14 bg-teal-500/10 rounded-2xl flex items-center justify-center mb-6">
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                className="w-14 h-14 bg-teal-500/10 rounded-2xl flex items-center justify-center mb-6 transition-colors group-hover:bg-teal-500/20"
+              >
                 <Zap className="text-teal-400" size={28} />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">Express-Prüfung</h3>
-              <p className="text-slate-400">Schnelle Ersteinschätzung innerhalb von 24h – damit Sie schnell Gewissheit haben.</p>
+              </motion.div>
+              <h3 className="text-xl font-bold text-white mb-3 group-hover:text-teal-300 transition-colors">Express-Prüfung</h3>
+              <p className="text-slate-400 group-hover:text-teal-100/80 transition-colors">Schnelle Ersteinschätzung innerhalb von 24h – damit Sie schnell Gewissheit haben.</p>
             </motion.div>
           </div>
         </div>
@@ -498,7 +515,12 @@ export default function Home() {
       {/* Testimonials Section */}
       <section className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col items-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col items-center mb-16"
+          >
             <h2 className="text-3xl font-bold mb-4">Referenzen</h2>
             <div className="flex items-center gap-2">
               <Star className="text-teal-400" size={20} fill="currentColor" />
@@ -508,19 +530,33 @@ export default function Home() {
               </div>
               <span className="text-gray-500 font-medium">4,8</span>
             </div>
-          </div>
-          
+          </motion.div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <TestimonialCard 
-              name="Markus S." 
-              text="Ich habe meinen Bußgeldbescheid wegen Handy am Steuer anfechten lassen und alles lief reibungslos. Die Erfahrung des Teams hat mir geholfen, das drohende Bußgeld abzuwenden." 
-              image="https://picsum.photos/seed/user1/100/100" 
-            />
-            <TestimonialCard 
-              name="Elena R." 
-              text="Von den Datenlecks hört man ja ständig, aber alleine habe ich mir nicht zugetraut, was dagegen zu machen. Mit helpcheck war es super einfach und unkompliziert." 
-              image="https://picsum.photos/seed/user4/100/100" 
-            />
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+            >
+              <TestimonialCard
+                name="Markus S."
+                text="Ich habe meinen Bußgeldbescheid wegen Handy am Steuer anfechten lassen und alles lief reibungslos. Die Erfahrung des Teams hat mir geholfen, das drohende Bußgeld abzuwenden."
+                image="https://picsum.photos/seed/user1/100/100"
+              />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <TestimonialCard
+                name="Elena R."
+                text="Von den Datenlecks hört man ja ständig, aber alleine habe ich mir nicht zugetraut, was dagegen zu machen. Mit helpcheck war es super einfach und unkompliziert."
+                image="https://picsum.photos/seed/user4/100/100"
+              />
+            </motion.div>
           </div>
         </div>
       </section>
@@ -528,14 +564,52 @@ export default function Home() {
       {/* Media Partners */}
       <section className="py-24 bg-white px-6 border-y border-gray-100">
         <div className="max-w-6xl mx-auto">
-          <p className="text-center text-gray-400 font-bold uppercase tracking-widest text-xs mb-12">Presse & Partner — Bekannt aus den Medien</p>
-          <div className="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all">
-            <span className="text-2xl font-serif font-bold">FAZ</span>
-            <span className="text-2xl font-sans font-extrabold">Handelsblatt</span>
-            <span className="text-2xl font-sans font-black italic">FOCUS</span>
-            <span className="text-xl font-serif">Süddeutsche Zeitung</span>
-            <span className="text-2xl font-sans font-bold">DIE WELT</span>
-          </div>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center text-gray-400 font-bold uppercase tracking-widest text-xs mb-12"
+          >
+            Presse & Partner — Bekannt aus den Medien
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="flex flex-wrap justify-center items-center gap-12 opacity-50 grayscale hover:grayscale-0 transition-all"
+          >
+            <motion.span
+              whileHover={{ scale: 1.1, opacity: 1 }}
+              className="text-2xl font-serif font-bold cursor-default"
+            >
+              FAZ
+            </motion.span>
+            <motion.span
+              whileHover={{ scale: 1.1, opacity: 1 }}
+              className="text-2xl font-sans font-extrabold cursor-default"
+            >
+              Handelsblatt
+            </motion.span>
+            <motion.span
+              whileHover={{ scale: 1.1, opacity: 1 }}
+              className="text-2xl font-sans font-black italic cursor-default"
+            >
+              FOCUS
+            </motion.span>
+            <motion.span
+              whileHover={{ scale: 1.1, opacity: 1 }}
+              className="text-xl font-serif cursor-default"
+            >
+              Süddeutsche Zeitung
+            </motion.span>
+            <motion.span
+              whileHover={{ scale: 1.1, opacity: 1 }}
+              className="text-2xl font-sans font-bold cursor-default"
+            >
+              DIE WELT
+            </motion.span>
+          </motion.div>
         </div>
       </section>
     </>

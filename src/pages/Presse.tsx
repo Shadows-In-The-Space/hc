@@ -19,7 +19,7 @@ export default function Presse() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-20 pb-32 px-6 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-24 pb-40 px-6 overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(20,184,166,0.3),transparent_70%)]" />
         </div>

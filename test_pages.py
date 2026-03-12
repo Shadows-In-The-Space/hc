@@ -56,6 +56,45 @@ def test_pages():
         page3.screenshot(path='/tmp/datenskandal.png', full_page=True)
         print("Screenshot saved to /tmp/datenskandal.png")
 
+        # Test Ratgeber page
+        print("\n=== Testing /ratgeber ===")
+        page4 = browser.new_page()
+        page4.goto('http://localhost:3000/ratgeber')
+        page4.wait_for_load_state('networkidle')
+        page4.wait_for_timeout(2000)
+
+        images4 = page4.locator('img').all()
+        print(f"Found {len(images4)} images on Ratgeber page:")
+        for i, img in enumerate(images4):
+            src = img.get_attribute('src') or 'no src'
+            print(f"  {i+1}. {src}")
+
+        # Check for article links
+        links = page4.locator('a').all()
+        print(f"Found {len(links)} links on Ratgeber page")
+
+        page4.screenshot(path='/tmp/ratgeber.png', full_page=True)
+        print("Screenshot saved to /tmp/ratgeber.png")
+
+        # Test Article page
+        print("\n=== Testing /ratgeber/bussgeldbescheid-anfechten ===")
+        page5 = browser.new_page()
+        page5.goto('http://localhost:3000/ratgeber/bussgeldbescheid-anfechten')
+        page5.wait_for_load_state('networkidle')
+        page5.wait_for_timeout(2000)
+
+        h1 = page5.locator('h1').first.text_content() if page5.locator('h1').count() > 0 else "No h1"
+        print(f"H1: {h1}")
+
+        images5 = page5.locator('img').all()
+        print(f"Found {len(images5)} images on Article page:")
+        for i, img in enumerate(images5):
+            src = img.get_attribute('src') or 'no src'
+            print(f"  {i+1}. {src}")
+
+        page5.screenshot(path='/tmp/article.png', full_page=True)
+        print("Screenshot saved to /tmp/article.png")
+
         browser.close()
         print("\n=== Done ===")
 

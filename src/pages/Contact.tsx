@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
+import { ScrollReveal, AnimatedCard } from '../components/ScrollReveal';
 import {
   Mail,
   Phone,
@@ -9,7 +10,6 @@ import {
   Send,
   CheckCircle2
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -27,7 +27,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-20 pb-32 px-6 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-24 pb-40 px-6 overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
           <video

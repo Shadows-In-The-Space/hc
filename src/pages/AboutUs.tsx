@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { ScrollReveal, AnimatedCard } from '../components/ScrollReveal';
 import { motion } from 'motion/react';
 import {
   Users,
@@ -17,7 +19,6 @@ import {
   Heart,
   Zap
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 export default function AboutUs() {
   const stats = [
@@ -54,7 +55,7 @@ export default function AboutUs() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-20 pb-32 px-6 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-24 pb-40 px-6 overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
           <video
@@ -70,40 +71,44 @@ export default function AboutUs() {
         </div>
 
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-teal-300 text-xs font-bold mb-8">
-            <Users size={14} /> ÜBER UNS
-          </motion.div>
-
-          <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
-            helpcheck <br />
-            <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
-              Ihr Partner für Recht
-            </span>
-          </motion.h1>
-
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-            className="text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto mb-10">
-            Seit 2016 setzen wir gemeinsam mit spezialisierten Partneranwälten und modernster Technologie Ihre Ansprüche durch.
-          </motion.p>
-
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-            className="flex flex-wrap justify-center items-center gap-6">
-            <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
-              <span className="bg-teal-500 text-slate-900 text-xs font-bold px-2 py-0.5 rounded">4,8</span>
-              <span className="text-teal-400">★</span>
-              <span>Trustpilot</span>
+          <ScrollReveal direction="up" delay={0}>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-teal-300 text-xs font-bold mb-8">
+              <Users size={14} /> ÜBER UNS
             </div>
-            <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
-              <CheckCircle2 size={16} className="text-teal-400" />
-              <span>TÜV geprüft</span>
+          </ScrollReveal>
+
+          <ScrollReveal direction="up" delay={0.1}>
+            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
+              helpcheck <br />
+              <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
+                Ihr Partner für Recht
+              </span>
+            </h1>
+          </ScrollReveal>
+
+          <ScrollReveal direction="up" delay={0.2}>
+            <p className="text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto mb-10">
+              Seit 2016 setzen wir gemeinsam mit spezialisierten Partneranwälten und modernster Technologie Ihre Ansprüche durch.
+            </p>
+          </ScrollReveal>
+
+          <ScrollReveal direction="up" delay={0.3}>
+            <div className="flex flex-wrap justify-center items-center gap-6">
+              <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
+                <span className="bg-teal-500 text-slate-900 text-xs font-bold px-2 py-0.5 rounded">4,8</span>
+                <span className="text-teal-400">★</span>
+                <span>Trustpilot</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
+                <CheckCircle2 size={16} className="text-teal-400" />
+                <span>TÜV geprüft</span>
+              </div>
+              <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
+                <Shield size={16} className="text-teal-400" />
+                <span>Legal Tech Deutschland</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-slate-300 text-sm font-medium">
-              <Shield size={16} className="text-teal-400" />
-              <span>Legal Tech Deutschland</span>
-            </div>
-          </motion.div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -112,10 +117,10 @@ export default function AboutUs() {
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {stats.map((stat, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
+              <ScrollReveal key={i} direction="up" delay={i * 0.1}>
                 <div className="text-3xl md:text-4xl font-bold text-white mb-1">{stat.number}</div>
                 <div className="text-sm text-white/80">{stat.label}</div>
-              </motion.div>
+              </ScrollReveal>
             ))}
           </div>
         </div>

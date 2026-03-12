@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
 import {
   Shield,
@@ -6,7 +6,6 @@ import {
   AlertTriangle,
   Clock,
   ArrowRight,
-  ArrowLeft,
   Users,
   Database,
   Lock,
@@ -21,37 +20,9 @@ import { ChatInterface } from '../components/chatbot';
 import { FAQSection, datenskandalFAQs } from '../components/FAQSection';
 import { generateOrganizationSchema, generateFAQSchema } from '../utils/seo';
 import { Link } from 'react-router-dom';
+import { ScrollReveal, AnimatedCard } from '../components/ScrollReveal';
 
 export default function Datenskandal() {
-  const carouselRef = useRef<HTMLDivElement>(null);
-
-  // Auto-scroll carousel
-  useEffect(() => {
-    const carousel = carouselRef.current;
-    if (!carousel) return;
-
-    const interval = setInterval(() => {
-      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-      if (carousel.scrollLeft >= maxScroll - 10) {
-        carousel.scrollTo({ left: 0, behavior: 'smooth' });
-      } else {
-        carousel.scrollBy({ left: 420, behavior: 'smooth' });
-      }
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (carouselRef.current) {
-      const scrollAmount = 400;
-      carouselRef.current.scrollBy({
-        left: direction === 'right' ? scrollAmount : -scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  };
-
   const organizationSchema = generateOrganizationSchema();
   const faqSchema = generateFAQSchema(datenskandalFAQs);
 
@@ -134,7 +105,7 @@ export default function Datenskandal() {
 
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-20 pb-32 px-6 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 pt-24 pb-40 px-6 overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
           <video
@@ -210,7 +181,7 @@ export default function Datenskandal() {
         </div>
       </section>
 
-      {/* Data Breaches Carousel */}
+      {/* Data Breaches Grid */}
       <section className="py-24 px-6 bg-gradient-to-b from-slate-900 to-slate-950">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -225,64 +196,41 @@ export default function Datenskandal() {
             </p>
           </motion.div>
 
-          <div className="flex justify-end gap-2 mb-6">
-            <button
-              onClick={() => scroll('left')}
-              className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
-            >
-              <ArrowLeft size={20} />
-            </button>
-            <button
-              onClick={() => scroll('right')}
-              className="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
-            >
-              <ArrowRight size={20} />
-            </button>
-          </div>
-
-          <div
-            ref={carouselRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth pb-4 snap-x snap-mandatory scrollbar-hide carousel-smooth"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {dataBreaches.map((breach, i) => (
-              <Link key={i} to={breach.link} className="shrink-0 snap-start">
-                <motion.div
-                  initial={{ opacity: 0, x: 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
-                  whileHover={{ y: -5, scale: 1.02 }}
-                  className="group relative bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all duration-300 overflow-hidden cursor-pointer w-[380px] h-[280px] shrink-0 flex flex-col justify-between"
-                >
-                  {/* Blurred background image */}
-                  <div className="absolute inset-0 z-0">
-                    <img
-                      src="/card-datenschutz.jpeg"
-                      alt=""
-                      className="w-full h-full object-cover opacity-20 blur-sm scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/70 to-transparent" />
-                  </div>
-
-                  <div className={`absolute inset-0 bg-gradient-to-br ${breach.color} opacity-0 group-hover:opacity-15 transition-opacity duration-300 z-10`} />
-
-                  <div className="relative z-20">
-                    <div className={`w-12 h-12 bg-gradient-to-br ${breach.color} rounded-xl flex items-center justify-center text-white shadow-lg mb-4`}>
-                      <breach.icon size={24} />
+              <Link key={i} to={breach.link} onClick={() => window.scrollTo(0, 0)}>
+                <ScrollReveal key={i} direction="up" delay={i * 0.1} className="w-full">
+                  <AnimatedCard className="group relative bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-3xl hover:bg-white/10 transition-all duration-300 overflow-hidden cursor-pointer h-[280px] flex flex-col justify-between">
+                    {/* Blurred background image */}
+                    <div className="absolute inset-0 z-0">
+                      <img
+                        src="/card-datenschutz.jpeg"
+                        alt=""
+                        className="w-full h-full object-cover opacity-20 blur-sm scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/70 to-transparent" />
                     </div>
-                    <div className="text-blue-400 text-sm font-bold mb-1">{breach.stats}</div>
-                    <h3 className="font-bold text-lg text-white mb-1 group-hover:text-blue-300 transition-colors">{breach.title}</h3>
-                  </div>
 
-                  <div className="relative z-20">
-                    <p className="text-slate-300 text-sm leading-relaxed line-clamp-2">{breach.description}</p>
-                  </div>
+                    <div className={`absolute inset-0 bg-gradient-to-br ${breach.color} opacity-0 group-hover:opacity-15 transition-opacity duration-300 z-10`} />
 
-                  <div className="flex items-center gap-2 text-blue-400 text-sm font-medium relative z-20">
-                    <span>Jetzt prüfen</span>
-                    <ChevronRight size={16} />
-                  </div>
-                </motion.div>
+                    <div className="relative z-20">
+                      <div className={`w-12 h-12 bg-gradient-to-br ${breach.color} rounded-xl flex items-center justify-center text-white shadow-lg mb-4`}>
+                        <breach.icon size={24} />
+                      </div>
+                      <div className="text-blue-400 text-sm font-bold mb-1">{breach.stats}</div>
+                      <h3 className="font-bold text-lg text-white mb-1 group-hover:text-blue-300 transition-colors">{breach.title}</h3>
+                    </div>
+
+                    <div className="relative z-20">
+                      <p className="text-slate-300 text-sm leading-relaxed line-clamp-2">{breach.description}</p>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-blue-400 text-sm font-medium relative z-20">
+                      <span>Jetzt prüfen</span>
+                      <ChevronRight size={16} />
+                    </div>
+                  </AnimatedCard>
+                </ScrollReveal>
               </Link>
             ))}
           </div>
@@ -306,28 +254,21 @@ export default function Datenskandal() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {steps.map((step, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="relative"
-              >
-                <div className="bg-white p-8 rounded-3xl shadow-lg border border-slate-100 h-full">
+              <ScrollReveal key={i} direction="up" delay={i * 0.15} className="w-full">
+                <AnimatedCard className="relative bg-white p-8 rounded-3xl shadow-lg border border-slate-100 h-full">
                   <div className="w-16 h-16 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg">
                     <step.icon size={32} />
                   </div>
                   <div className="absolute top-6 right-8 text-6xl font-bold text-slate-100">{i + 1}</div>
                   <h3 className="font-bold text-xl text-slate-900 mb-3">{step.title}</h3>
                   <p className="text-slate-500 leading-relaxed">{step.description}</p>
-                </div>
-                {i < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                    <ArrowRight className="text-blue-400" size={24} />
-                  </div>
-                )}
-              </motion.div>
+                  {i < steps.length - 1 && (
+                    <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                      <ArrowRight className="text-blue-400" size={24} />
+                    </div>
+                  )}
+                </AnimatedCard>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -350,22 +291,16 @@ export default function Datenskandal() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {advantages.map((adv, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -8 }}
-                className="bg-white p-8 rounded-3xl shadow-lg border border-slate-100 text-center hover:shadow-xl transition-all duration-300"
-              >
-                <div className="text-4xl font-bold text-blue-500 mb-3">{adv.stat}</div>
-                <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-700 mx-auto mb-4">
-                  <adv.icon size={24} />
-                </div>
-                <h3 className="font-bold text-lg text-slate-900 mb-2">{adv.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{adv.description}</p>
-              </motion.div>
+              <ScrollReveal key={i} direction="up" delay={i * 0.1} className="w-full">
+                <AnimatedCard className="bg-white p-8 rounded-3xl shadow-lg border border-slate-100 text-center hover:shadow-xl transition-all duration-300">
+                  <div className="text-4xl font-bold text-blue-500 mb-3">{adv.stat}</div>
+                  <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-700 mx-auto mb-4">
+                    <adv.icon size={24} />
+                  </div>
+                  <h3 className="font-bold text-lg text-slate-900 mb-2">{adv.title}</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed">{adv.description}</p>
+                </AnimatedCard>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -385,7 +320,7 @@ export default function Datenskandal() {
             <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
               Lassen Sie jetzt kostenlos prüfen, ob Sie betroffen sind und Anspruch auf Entschädigung haben.
             </p>
-            <Link to="/">
+            <Link to="/" onClick={() => window.scrollTo(0, 0)}>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

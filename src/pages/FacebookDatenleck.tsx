@@ -1,45 +1,36 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import {
-  Database,
-  ArrowRight,
-  CheckCircle2,
-  AlertTriangle,
-  Shield,
-  Clock,
-  Users,
-  Mail,
-  Phone,
-  ChevronRight,
-  Lock,
-  Eye,
-  Calendar,
-  MapPin
-} from 'lucide-react';
+import { Database, ArrowRight, CheckCircle2, AlertTriangle, Shield, Clock, Users, Mail, Phone, ChevronRight, Lock, Eye, Calendar, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ChatInterface } from '../components/chatbot';
+import { useCountUp } from '../hooks/useCountUp';
+import { ScrollReveal, AnimatedCard } from '../components/ScrollReveal';
 
 export default function FacebookDatenleck() {
   const facts = [
     {
-      number: "533",
+      number: 533,
       unit: "Millionen",
-      label: "Betroffene Nutzer"
+      label: "Betroffene Nutzer",
+      suffix: '+'
     },
     {
-      number: "106",
+      number: 106,
       unit: "Länder",
-      label: "Betroffene Regionen"
+      label: "Betroffene Regionen",
+      suffix: ''
     },
     {
-      number: "2021",
+      number: 2021,
       unit: "",
-      label: "Jahr des Leaks"
+      label: "Jahr des Leaks",
+      suffix: ''
     },
     {
-      number: "∞",
-      unit: "",
-      label: "Entschädigung möglich"
+      number: 100,
+      unit: "%",
+      label: "Entschädigung möglich",
+      suffix: '+'
     }
   ];
 
@@ -56,7 +47,7 @@ export default function FacebookDatenleck() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-blue-950 via-blue-900 to-slate-800 pt-20 pb-32 px-6 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-blue-950 via-blue-900 to-slate-800 pt-24 pb-40 px-6 overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.4),transparent_70%)]" />
         </div>
@@ -111,14 +102,17 @@ export default function FacebookDatenleck() {
             className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 shadow-2xl"
           >
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              {facts.map((fact, i) => (
-                <div key={i}>
-                  <div className="text-4xl md:text-5xl font-bold text-blue-400 mb-2">
-                    {fact.number}<span className="text-2xl">{fact.unit}</span>
+              {facts.map((fact, i) => {
+                const { count, ref } = useCountUp({ end: fact.number, duration: 2000 });
+                return (
+                  <div key={i}>
+                    <div className="text-4xl md:text-5xl font-bold text-blue-400 mb-2" ref={ref}>
+                      {count}{fact.suffix}<span className="text-2xl">{fact.unit}</span>
+                    </div>
+                    <div className="text-sm text-blue-100">{fact.label}</div>
                   </div>
-                  <div className="text-sm text-blue-100">{fact.label}</div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </motion.div>
         </div>
@@ -137,19 +131,16 @@ export default function FacebookDatenleck() {
             <p className="text-slate-600">Diese sensiblen Daten waren öffentlich zugänglich:</p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-4"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {leakedData.map((item, i) => (
-              <div key={i} className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
-                <CheckCircle2 className="text-blue-500 shrink-0" size={20} />
-                <span className="text-slate-700">{item.label}</span>
-              </div>
+              <ScrollReveal key={i} direction="left" delay={i * 0.1}>
+                <AnimatedCard className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
+                  <CheckCircle2 className="text-blue-500 shrink-0" size={20} />
+                  <span className="text-slate-700">{item.label}</span>
+                </AnimatedCard>
+              </ScrollReveal>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -172,22 +163,17 @@ export default function FacebookDatenleck() {
               { title: "Dokumentieren", desc: "Sammeln Sie Beweise für den Schaden" },
               { title: "Entschädigung fordern", desc: "Sie haben Anspruch auf Schadensersatz" }
             ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-lg border border-slate-100"
-              >
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold shrink-0">
-                  {i + 1}
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-900 mb-1">{item.title}</h3>
-                  <p className="text-slate-500 text-sm">{item.desc}</p>
-                </div>
-              </motion.div>
+              <ScrollReveal key={i} direction="left" delay={i * 0.1}>
+                <AnimatedCard className="flex items-start gap-4 p-6 bg-white rounded-2xl shadow-lg border border-slate-100">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold shrink-0">
+                    {i + 1}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 mb-1">{item.title}</h3>
+                    <p className="text-slate-500 text-sm">{item.desc}</p>
+                  </div>
+                </AnimatedCard>
+              </ScrollReveal>
             ))}
           </div>
         </div>

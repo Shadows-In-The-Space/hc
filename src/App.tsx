@@ -7,8 +7,10 @@ import {
   Bot
 } from 'lucide-react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { ChatProvider, FloatingWidget } from './components/chatbot';
+import { ChatProvider, FloatingWidget, ChatInterface } from './components/chatbot';
+import { useChat } from './components/chatbot/ChatContext';
 import { useSmoothScroll } from './hooks/useSmoothScroll';
+import { GrainOverlay } from './components/GrainOverlay';
 import Home from './pages/Home';
 import Verkehrsrecht from './pages/Verkehrsrecht';
 import Ratgeber from './pages/Ratgeber';
@@ -28,6 +30,7 @@ import Datenschutz from './pages/Datenschutz';
 import Jobs from './pages/Jobs';
 import Presse from './pages/Presse';
 import Article from './pages/Article';
+import Admin from './pages/Admin';
 
 // --- Shared Components ---
 
@@ -51,7 +54,7 @@ const Navbar = () => (
       <Link to="/ratgeber" className="hover:text-blue-600">Ratgeber</Link>
       <Link to="/about" className="hover:text-blue-600">Über uns</Link>
       <Link to="/contact" className="hover:text-blue-600">Hilfe & Kontakt</Link>
-      <a href="#" className="text-gray-900 font-semibold hover:text-blue-600">Login</a>
+      <Link to="/admin" className="text-gray-900 font-semibold hover:text-blue-600">Login</Link>
       <button className="bg-blue-900 text-white px-4 py-2 rounded-md text-xs font-bold flex items-center gap-2">
         <div className="w-4 h-4 bg-white/20 rounded-sm"></div>
         KUNDENPORTAL
@@ -158,11 +161,20 @@ const CookieBanner = () => {
 
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const isSpecialPage = location.pathname === '/' || location.pathname === '/verkehrsrecht';
+  const { isOpen, closeChat } = useChat();
+  const isSpecialPage = location.pathname === '/' || location.pathname === '/verkehrsrecht' || location.pathname === '/datenskandal';
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900 selection:bg-teal-100">
       <Navbar />
+      {/* Chat oben im Hero für Non-Special Pages */}
+      {!isSpecialPage && isOpen && (
+        <div className="fixed top-20 left-0 right-0 z-[150] px-4">
+          <div className="max-w-3xl mx-auto">
+            <ChatInterface />
+          </div>
+        </div>
+      )}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/verkehrsrecht" element={<Verkehrsrecht />} />
@@ -183,6 +195,7 @@ const AppContent: React.FC = () => {
         <Route path="/datenschutz" element={<Datenschutz />} />
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/presse" element={<Presse />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
       {!isSpecialPage && <FloatingWidget />}
       <Footer />
@@ -197,6 +210,7 @@ export default function App() {
   return (
     <ChatProvider>
       <Router>
+        <GrainOverlay opacity={0.025} speed={10} />
         <AppContent />
       </Router>
     </ChatProvider>

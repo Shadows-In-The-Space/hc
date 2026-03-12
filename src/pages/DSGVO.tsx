@@ -33,7 +33,7 @@ export default function DSGVO() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <section className="relative bg-gradient-to-b from-indigo-950 via-indigo-900 to-slate-800 pt-20 pb-32 px-6 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-indigo-950 via-indigo-900 to-slate-800 pt-24 pb-40 px-6 overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(99,102,241,0.4),transparent_70%)]" />
         </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { ScrollReveal, AnimatedCard } from '../components/ScrollReveal';
 import { motion } from 'motion/react';
 import {
   ArrowLeft,
@@ -832,56 +833,45 @@ export default function ArticlePage() {
             <ArrowLeft size={18} /> Zurück zum Ratgeber
           </Link>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-block px-3 py-1 bg-teal-500/20 text-teal-300 text-xs font-medium rounded-full mb-4"
-          >
-            {article.category}
-          </motion.div>
+          <ScrollReveal direction="up" delay={0}>
+            <div className="inline-block px-3 py-1 bg-teal-500/20 text-teal-300 text-xs font-medium rounded-full mb-4">
+              {article.category}
+            </div>
+          </ScrollReveal>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-4xl font-bold text-white mb-6"
-          >
-            {article.title}
-          </motion.h1>
+          <ScrollReveal direction="up" delay={0.1}>
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              {article.title}
+            </h1>
+          </ScrollReveal>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="flex flex-wrap items-center gap-4 text-slate-400 text-sm"
-          >
-            <div className="flex items-center gap-2">
-              <User size={16} />
-              <span>{article.author}</span>
+          <ScrollReveal direction="up" delay={0.2}>
+            <div className="flex flex-wrap items-center gap-4 text-slate-400 text-sm">
+              <div className="flex items-center gap-2">
+                <User size={16} />
+                <span>{article.author}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Calendar size={16} />
+                <span>{article.date}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock size={16} />
+                <span>{article.readTime} Lesezeit</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Calendar size={16} />
-              <span>{article.date}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock size={16} />
-              <span>{article.readTime} Lesezeit</span>
-            </div>
-          </motion.div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* Content */}
       <section className="py-16 px-6">
         <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="prose prose-lg max-w-none"
-          >
-            {article.content}
-          </motion.div>
+          <ScrollReveal direction="up" delay={0.3}>
+            <div className="prose prose-lg max-w-none">
+              {article.content}
+            </div>
+          </ScrollReveal>
 
           {/* CTA */}
           <div className="mt-16 bg-gradient-to-r from-teal-600 to-cyan-600 rounded-3xl p-8 text-center">

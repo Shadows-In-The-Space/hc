@@ -1,5 +1,6 @@
 import React from 'react';
-import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
+import { ScrollReveal, AnimatedCard } from '../components/ScrollReveal';
 import {
   BookOpen,
   ArrowRight,
@@ -13,7 +14,6 @@ import {
   ChevronRight,
   CheckCircle2
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import ArticleCard from '../components/ArticleCard';
 
 export const verkehrsrechtArticles = [
@@ -162,31 +162,23 @@ export default function Ratgeber() {
         </div>
 
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-teal-300 text-xs font-bold mb-8"
-          >
-            <BookOpen size={14} /> RATGEBER
-          </motion.div>
+          <ScrollReveal direction="up" delay={0}>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-teal-300 text-xs font-bold mb-8">
+              <BookOpen size={14} /> RATGEBER
+            </div>
+          </ScrollReveal>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight"
-          >
-            Ratgeber & <span className="text-teal-400">Wissen</span>
-          </motion.h1>
+          <ScrollReveal direction="up" delay={0.1}>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight">
+              Ratgeber & <span className="text-teal-400">Wissen</span>
+            </h1>
+          </ScrollReveal>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-xl text-slate-300 max-w-2xl mx-auto"
-          >
-            Kompetente Informationen zu Ihren Rechten bei Bußgeldern, Datenlecks und mehr.
-          </motion.p>
+          <ScrollReveal direction="up" delay={0.2}>
+            <p className="text-xl text-slate-300 max-w-2xl mx-auto">
+              Kompetente Informationen zu Ihren Rechten bei Bußgeldern, Datenlecks und mehr.
+            </p>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -195,13 +187,15 @@ export default function Ratgeber() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-wrap justify-center gap-4">
             <Link
-              to="/ratgeber#verkehrsrecht"
+              to="/verkehrsrecht"
+              onClick={() => window.scrollTo(0, 0)}
               className="px-6 py-3 bg-slate-900 text-white rounded-full font-medium hover:bg-slate-800 transition-colors"
             >
               Verkehrsrecht
             </Link>
             <Link
-              to="/ratgeber#datenskandal"
+              to="/datenskandal"
+              onClick={() => window.scrollTo(0, 0)}
               className="px-6 py-3 bg-white text-slate-700 border border-slate-300 rounded-full font-medium hover:bg-slate-50 transition-colors"
             >
               Datenskandal
@@ -213,37 +207,30 @@ export default function Ratgeber() {
       {/* Verkehrsrecht Articles */}
       <section id="verkehrsrecht" className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Verkehrsrecht</h2>
-            <p className="text-slate-600 max-w-2xl mx-auto">
-              Alles rund um Bußgeldbescheide, Fahrverbote und Ihre Rechte im Straßenverkehr.
-            </p>
-          </motion.div>
+          <ScrollReveal direction="up" delay={0}>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Verkehrsrecht</h2>
+              <p className="text-slate-600 max-w-2xl mx-auto">
+                Alles rund um Bußgeldbescheide, Fahrverbote und Ihre Rechte im Straßenverkehr.
+              </p>
+            </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {verkehrsrechtArticles.map((article, i) => (
-              <motion.div
-                key={article.slug}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <ArticleCard
-                  slug={article.slug}
-                  title={article.title}
-                  excerpt={article.excerpt}
-                  category={article.category}
-                  readTime={article.readTime}
-                  icon={article.icon}
-                  variant="teal"
-                />
-              </motion.div>
+              <ScrollReveal key={article.slug} direction="up" delay={i * 0.05}>
+                <AnimatedCard>
+                  <ArticleCard
+                    slug={article.slug}
+                    title={article.title}
+                    excerpt={article.excerpt}
+                    category={article.category}
+                    readTime={article.readTime}
+                    icon={article.icon}
+                    variant="teal"
+                  />
+                </AnimatedCard>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -252,37 +239,30 @@ export default function Ratgeber() {
       {/* Datenskandal Articles */}
       <section id="datenskandal" className="py-20 px-6 bg-slate-100">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Datenskandal</h2>
-            <p className="text-slate-600 max-w-2xl mx-auto">
-              Informationen zu Datenlecks und wie Sie Schadensersatzansprüche geltend machen.
-            </p>
-          </motion.div>
+          <ScrollReveal direction="up" delay={0}>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Datenskandal</h2>
+              <p className="text-slate-600 max-w-2xl mx-auto">
+                Informationen zu Datenlecks und wie Sie Schadensersatzansprüche geltend machen.
+              </p>
+            </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {datenskandalArticles.map((article, i) => (
-              <motion.div
-                key={article.slug}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <ArticleCard
-                  slug={article.slug}
-                  title={article.title}
-                  excerpt={article.excerpt}
-                  category={article.category}
-                  readTime={article.readTime}
-                  icon={article.icon}
-                  variant="blue"
-                />
-              </motion.div>
+              <ScrollReveal key={article.slug} direction="up" delay={i * 0.05}>
+                <AnimatedCard>
+                  <ArticleCard
+                    slug={article.slug}
+                    title={article.title}
+                    excerpt={article.excerpt}
+                    category={article.category}
+                    readTime={article.readTime}
+                    icon={article.icon}
+                    variant="blue"
+                  />
+                </AnimatedCard>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -291,11 +271,7 @@ export default function Ratgeber() {
       {/* CTA Section */}
       <section className="py-20 px-6 bg-gradient-to-r from-slate-900 to-slate-800">
         <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
+          <ScrollReveal direction="up" delay={0}>
             <h2 className="text-3xl font-bold text-white mb-6">
               Noch Fragen?
             </h2>
@@ -303,15 +279,13 @@ export default function Ratgeber() {
               Lassen Sie Ihren Fall kostenlos von unseren Experten prüfen.
             </p>
             <Link to="/">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-gradient-to-r from-teal-400 to-cyan-400 text-slate-900 font-bold py-4 px-10 rounded-full shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2"
-              >
-                Kostenlos prüfen <ArrowRight size={20} />
-              </motion.button>
+              <AnimatedCard className="inline-block">
+                <button className="bg-gradient-to-r from-teal-400 to-cyan-400 text-slate-900 font-bold py-4 px-10 rounded-full shadow-lg hover:shadow-xl transition-all inline-flex items-center gap-2">
+                  Kostenlos prüfen <ArrowRight size={20} />
+                </button>
+              </AnimatedCard>
             </Link>
-          </motion.div>
+          </ScrollReveal>
         </div>
       </section>
     </div>

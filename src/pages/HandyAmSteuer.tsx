@@ -8,16 +8,20 @@ import {
   Shield,
   Clock,
   Users,
-  MapPin
+  MapPin,
+  Eye,
+  Camera
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ChatInterface } from '../components/chatbot';
+import { useCountUp } from '../hooks/useCountUp';
+import { ScrollReveal, AnimatedCard } from '../components/ScrollReveal';
 
 export default function HandyAmSteuer() {
   const facts = [
-    { number: "60", unit: "€", label: "Bußgeld" },
-    { number: "1", unit: "Punkt", label: "im FAER" },
-    { number: "2", unit: "", label: "Monate Fahrverbot" }
+    { number: 60, unit: "€", label: "Bußgeld" },
+    { number: 1, unit: "Punkt", label: "im FAER" },
+    { number: 2, unit: "Monate", label: "Fahrverbot" }
   ];
 
   const defensePoints = [
@@ -27,11 +31,24 @@ export default function HandyAmSteuer() {
     "Wie eindeutig war die Beweisführung?"
   ];
 
+  const penalties = [
+    { range: "Ohne Bewegung", fine: "60 €", points: "1 Punkt", ban: "-" },
+    { range: "Bis 3 Monate", fine: "100 €", points: "1 Punkt", ban: "1 Monat" },
+    { range: "Über 3 Monate", fine: "200 €", points: "2 Punkte", ban: "3 Monate" },
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50">
-      <section className="relative bg-gradient-to-b from-orange-950 via-orange-900 to-slate-800 pt-20 pb-32 px-6 overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-20">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(249,115,22,0.4),transparent_70%)]" />
+      {/* Hero Section with Real Image */}
+      <section className="relative bg-gradient-to-b from-orange-950 via-orange-900 to-slate-800 pt-24 pb-40 px-6 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/card-verkehr.jpeg"
+            alt="Smartphone am Steuer"
+            className="w-full h-full object-cover opacity-30"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-orange-950/90 via-orange-900/70 to-slate-800/90" />
         </div>
 
         <div className="max-w-6xl mx-auto text-center relative z-10">
@@ -70,22 +87,27 @@ export default function HandyAmSteuer() {
         </div>
       </section>
 
+      {/* Stats Banner with CountUp Animation */}
       <section className="py-12 px-6 relative -mt-16 z-20">
         <div className="max-w-4xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 shadow-2xl">
             <div className="grid grid-cols-3 gap-8 text-center">
-              {facts.map((fact, i) => (
-                <div key={i}>
-                  <div className="text-4xl font-bold text-orange-400 mb-2">{fact.number}<span className="text-xl">{fact.unit}</span></div>
-                  <div className="text-sm text-orange-100">{fact.label}</div>
-                </div>
-              ))}
+              {facts.map((fact, i) => {
+                const { count, ref } = useCountUp({ end: parseInt(fact.number), duration: 1500 });
+                return (
+                  <div key={i}>
+                    <div className="text-4xl font-bold text-orange-400 mb-2" ref={ref}>{count}<span className="text-xl">{fact.unit}</span></div>
+                    <div className="text-sm text-orange-100">{fact.label}</div>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         </div>
       </section>
 
+      {/* Defense Points with Cards */}
       <section className="py-24 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
@@ -93,18 +115,62 @@ export default function HandyAmSteuer() {
             <p className="text-slate-600">Diese Punkte sollten geprüft werden:</p>
           </motion.div>
 
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {defensePoints.map((point, i) => (
-              <motion.div key={i} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl">
-                <AlertTriangle className="text-orange-500 shrink-0" size={20} />
-                <span className="text-slate-700">{point}</span>
-              </motion.div>
+              <ScrollReveal key={i} direction="left" delay={i * 0.1} className="w-full">
+                <AnimatedCard className="flex items-center gap-3 p-6 bg-slate-50 rounded-2xl hover:bg-orange-50 transition-colors cursor-pointer">
+                  <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center shrink-0">
+                    <Eye className="text-orange-500" size={20} />
+                  </div>
+                  <span className="text-slate-700 font-medium">{point}</span>
+                </AnimatedCard>
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Penalties Table */}
+      <section className="py-24 px-6 bg-slate-50">
+        <div className="max-w-4xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">Strafen im Überblick</h2>
+            <p className="text-slate-600">Bußgeldkatalog für Handy am Steuer:</p>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-white rounded-3xl shadow-lg overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-orange-50">
+                <tr>
+                  <th className="text-left p-4 font-bold text-slate-900">Tatbestand</th>
+                  <th className="text-center p-4 font-bold text-slate-900">Bußgeld</th>
+                  <th className="text-center p-4 font-bold text-slate-900">Punkte</th>
+                  <th className="text-center p-4 font-bold text-slate-900">Fahrverbot</th>
+                </tr>
+              </thead>
+              <tbody>
+                {penalties.map((pen, i) => (
+                  <motion.tr
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="border-t border-slate-100 hover:bg-slate-50"
+                  >
+                    <td className="p-4 text-slate-700">{pen.range}</td>
+                    <td className="p-4 text-center font-bold text-orange-600">{pen.fine}</td>
+                    <td className="p-4 text-center text-slate-700">{pen.points}</td>
+                    <td className="p-4 text-center text-slate-700">{pen.ban}</td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA Banner */}
       <section className="py-20 px-6 bg-gradient-to-r from-orange-600 to-amber-600">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
