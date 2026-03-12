@@ -6,7 +6,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  Clock,
   ArrowRight,
   Send,
   CheckCircle2
@@ -14,10 +13,39 @@ import {
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
+    setIsLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: `${formData.get('firstName')} ${formData.get('lastName')}`.trim(),
+      email: formData.get('email') as string,
+      phone: formData.get('phone') as string,
+      message: formData.get('message') as string,
+      topic: 'contact',
+      source: 'contact_form'
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/leads`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+      }
+    } catch (error) {
+      console.error('Fehler beim Senden:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const contactInfo = [
@@ -93,20 +121,24 @@ export default function Contact() {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" placeholder="Vorname" required
+                    <input name="firstName" type="text" placeholder="Vorname" required
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
-                    <input type="text" placeholder="Nachname" required
+                    <input name="lastName" type="text" placeholder="Nachname" required
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
                   </div>
-                  <input type="email" placeholder="E-Mail-Adresse" required
+                  <input name="email" type="email" placeholder="E-Mail-Adresse" required
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
-                  <input type="tel" placeholder="Telefonnummer"
+                  <input name="phone" type="tel" placeholder="Telefonnummer"
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/50" />
-                  <textarea placeholder="Ihre Nachricht..." rows={5} required
+                  <textarea name="message" placeholder="Ihre Nachricht..." rows={5} required
                     className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/50 resize-none" />
-                  <button type="submit"
-                    className="w-full bg-gradient-to-r from-teal-400 to-cyan-400 text-slate-900 font-bold py-4 px-6 rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2">
-                    <Send size={20} /> Nachricht senden
+                  <button type="submit" disabled={isLoading}
+                    className="w-full bg-gradient-to-r from-teal-400 to-cyan-400 text-slate-900 font-bold py-4 px-6 rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50">
+                    {isLoading ? (
+                      <span>Wird gesendet...</span>
+                    ) : (
+                      <><Send size={20} /> Nachricht senden</>
+                    )}
                   </button>
                 </form>
               )}

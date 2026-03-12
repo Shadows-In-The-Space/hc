@@ -43,6 +43,9 @@ export async function submitLead(lead: LeadPayload): Promise<Lead> {
     formData.append('topic', lead.topic || '');
     formData.append('message', lead.message || '');
     formData.append('source', lead.source || 'chatbot');
+    if (lead.chat_history) {
+      formData.append('chat_history', lead.chat_history);
+    }
 
     lead.files.forEach((file) => {
       formData.append('files', file);
