@@ -87,6 +87,7 @@ export const LeadForm: React.FC = () => {
         message: formData.description || '',
         source: 'chatbot',
         files: uploadedFiles,
+        chat_history: JSON.stringify(messages),
       });
 
       setLead(formData as Lead);

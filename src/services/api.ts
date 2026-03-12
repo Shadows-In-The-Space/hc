@@ -12,6 +12,7 @@ export interface LeadPayload {
   message?: string;
   source?: string;
   files?: File[];
+  chat_history?: string;
 }
 
 export interface Lead {
@@ -23,6 +24,8 @@ export interface Lead {
   message: string | null;
   status: string;
   source: string;
+  files: string | null;
+  chat_history: string | null;
   created_at: string;
   updated_at: string;
 }

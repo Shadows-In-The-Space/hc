@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Lock, User, Eye, EyeOff, Users, AlertCircle, CheckCircle, Clock, LogOut } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, Users, AlertCircle, CheckCircle, Clock, LogOut, ChevronDown, ChevronUp, MessageCircle, FileText } from 'lucide-react';
 import { getLeads, Lead } from '../services/api';
 
 const AdminPage: React.FC = () => {
@@ -11,6 +11,7 @@ const AdminPage: React.FC = () => {
   const [error, setError] = useState('');
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [expandedLead, setExpandedLead] = useState<number | null>(null);
 
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
 
@@ -269,6 +270,7 @@ const AdminPage: React.FC = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Thema</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quelle</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chat</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -297,8 +299,64 @@ const AdminPage: React.FC = () => {
                       <td className="px-6 py-4 text-sm text-gray-500">
                         {lead.source}
                       </td>
+                      <td className="px-6 py-4">
+                        {lead.chat_history ? (
+                          <button
+                            onClick={() => setExpandedLead(expandedLead === lead.id ? null : lead.id)}
+                            className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+                          >
+                            {expandedLead === lead.id ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                            <MessageCircle className="w-4 h-4" />
+                            Chat
+                          </button>
+                        ) : (
+                          <span className="text-gray-400 text-xs">-</span>
+                        )}
+                      </td>
                     </tr>
                   ))}
+                  {expandedLead && (
+                    <>
+                    {(() => {
+                      const lead = leads.find(l => l.id === expandedLead);
+                      if (!lead || !lead.chat_history) return null;
+                      return (
+                        <tr>
+                          <td colSpan={7} className="bg-blue-50 p-4">
+                            <div className="max-h-64 overflow-y-auto bg-white rounded-lg p-4 shadow-inner">
+                              <h4 className="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                                <MessageCircle className="w-4 h-4" /> Chat-Verlauf
+                              </h4>
+                              <div className="space-y-3">
+                                {(() => {
+                                  try {
+                                    const chats = JSON.parse(lead.chat_history);
+                                    return chats.map((msg: any, idx: number) => (
+                                      <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                        <div className={`max-w-[80%] p-3 rounded-lg text-sm ${
+                                          msg.role === 'user'
+                                            ? 'bg-blue-500 text-white'
+                                            : 'bg-gray-100 text-gray-800'
+                                        }`}>
+                                          <div className="text-xs opacity-70 mb-1">
+                                            {msg.role === 'user' ? 'Sie' : 'HelpCheck'}
+                                          </div>
+                                          {msg.content}
+                                        </div>
+                                      </div>
+                                    ));
+                                  } catch {
+                                    return <p className="text-gray-500">Fehler beim Laden des Chat-Verlaufs</p>;
+                                  }
+                                })()}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })()}
+                    </>
+                  )}
                 </tbody>
               </table>
             </div>

@@ -4,7 +4,7 @@
 
 const express = require('express');
 const cors = require('cors');
-const sqlite3 = require('better-sqlite3');
+const sqlite3 = require('sqlite3').verbose();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -28,51 +28,65 @@ if (!fs.existsSync(dbDir)) {
 }
 
 // SQLite Datenbank
-const db = new sqlite3(path.join(dbDir, 'helpcheck.db'));
+const dbPath = path.join(dbDir, 'helpcheck.db');
+const db = new sqlite3.Database(dbPath);
 
 // Tabellen erstellen
-db.exec(`
-  CREATE TABLE IF NOT EXISTS leads (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    email TEXT NOT NULL,
-    phone TEXT,
-    topic TEXT,
-    message TEXT,
-    status TEXT DEFAULT 'new',
-    source TEXT DEFAULT 'chatbot',
-    files TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
+db.serialize(() => {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS leads (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT,
+      email TEXT NOT NULL,
+      phone TEXT,
+      topic TEXT,
+      message TEXT,
+      status TEXT DEFAULT 'new',
+      source TEXT DEFAULT 'chatbot',
+      files TEXT,
+      chat_history TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
 
-  CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
+  // Chat-History Spalte hinzufügen falls nicht vorhanden
+  db.run("ALTER TABLE leads ADD COLUMN chat_history TEXT", (err) => {
+    // Ignorieren falls bereits vorhanden
+  });
 
-  CREATE TABLE IF NOT EXISTS appointments (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    lead_id INTEGER,
-    date TEXT,
-    time TEXT,
-    type TEXT,
-    notes TEXT,
-    status TEXT DEFAULT 'scheduled',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (lead_id) REFERENCES leads(id)
-  );
-`);
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
 
-// Admin-Benutzer erstellen (falls nicht vorhanden)
-const adminExists = db.prepare('SELECT id FROM users WHERE username = ?').get('admin');
-if (!adminExists) {
-  const hashedPassword = bcrypt.hashSync('helpcheck2024', 10);
-  db.prepare('INSERT INTO users (username, password) VALUES (?, ?)').run('admin', hashedPassword);
-  console.log('Admin-Benutzer erstellt (admin/helpcheck2024)');
-}
+  db.run(`
+    CREATE TABLE IF NOT EXISTS appointments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      lead_id INTEGER,
+      date TEXT,
+      time TEXT,
+      type TEXT,
+      notes TEXT,
+      status TEXT DEFAULT 'scheduled',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (lead_id) REFERENCES leads(id)
+    )
+  `);
+
+  // Admin-Benutzer erstellen (falls nicht vorhanden)
+  db.get('SELECT id FROM users WHERE username = ?', ['admin'], (err, row) => {
+    if (!row) {
+      const hashedPassword = bcrypt.hashSync('helpcheck2024', 10);
+      db.run('INSERT INTO users (username, password) VALUES (?, ?)', ['admin', hashedPassword]);
+      console.log('Admin-Benutzer erstellt (admin/helpcheck2024)');
+    }
+  });
+});
 
 // Multer Konfiguration für File-Uploads
 const storage = multer.diskStorage({
@@ -91,7 +105,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
     const ext = path.extname(file.originalname).toLowerCase();
@@ -124,29 +138,32 @@ const authenticateToken = (req, res, next) => {
 // --- API Routes ---
 
 // Login
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/auth/login', (req, res) => {
   const { username, password } = req.body;
 
-  const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+  db.get('SELECT * FROM users WHERE username = ?', [username], (err, user) => {
+    if (err || !user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-  if (!user || !bcrypt.compareSync(password, user.password)) {
-    return res.status(401).json({ error: 'Invalid credentials' });
-  }
+    if (!bcrypt.compareSync(password, user.password)) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
 
-  const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '24h' });
-  res.json({ token, username: user.username });
+    const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '24h' });
+    res.json({ token, username: user.username });
+  });
 });
 
 // Leads erstellen (mit File-Upload)
 app.post('/api/leads', upload.array('files', 5), (req, res) => {
   try {
-    const { name, email, phone, topic, message, source } = req.body;
+    const { name, email, phone, topic, message, source, chat_history } = req.body;
 
     if (!email) {
       return res.status(400).json({ error: 'Email is required' });
     }
 
-    // Dateien speichern
     const files = req.files ? req.files.map(f => ({
       name: f.originalname,
       path: `/uploads/${f.filename}`,
@@ -154,25 +171,29 @@ app.post('/api/leads', upload.array('files', 5), (req, res) => {
     })) : [];
 
     const stmt = db.prepare(`
-      INSERT INTO leads (name, email, phone, topic, message, source, files)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO leads (name, email, phone, topic, message, source, files, chat_history)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
-    const result = stmt.run(
+    stmt.run(
       name || null,
       email,
       phone || null,
       topic || null,
       message || null,
       source || 'chatbot',
-      files.length > 0 ? JSON.stringify(files) : null
+      files.length > 0 ? JSON.stringify(files) : null,
+      chat_history || null,
+      function(err) {
+        if (err) {
+          console.error('Error creating lead:', err);
+          return res.status(500).json({ error: 'Failed to create lead' });
+        }
+
+        console.log(`Neuer Lead erstellt: ${email} (ID: ${this.lastID})`);
+        res.status(201).json({ id: this.lastID, email, name, phone, topic, message, source });
+      }
     );
-
-    const lead = db.prepare('SELECT * FROM leads WHERE id = ?').get(result.lastInsertRowid);
-
-    console.log(`Neuer Lead erstellt: ${email} (ID: ${lead.id})`);
-
-    res.status(201).json(lead);
   } catch (error) {
     console.error('Error creating lead:', error);
     res.status(500).json({ error: 'Failed to create lead' });
@@ -181,61 +202,54 @@ app.post('/api/leads', upload.array('files', 5), (req, res) => {
 
 // Alle Leads abrufen (Admin)
 app.get('/api/leads', authenticateToken, (req, res) => {
-  try {
-    const leads = db.prepare(`
-      SELECT * FROM leads ORDER BY created_at DESC
-    `).all();
-
+  db.all('SELECT * FROM leads ORDER BY created_at DESC', [], (err, leads) => {
+    if (err) {
+      console.error('Error fetching leads:', err);
+      return res.status(500).json({ error: 'Failed to fetch leads' });
+    }
     res.json(leads);
-  } catch (error) {
-    console.error('Error fetching leads:', error);
-    res.status(500).json({ error: 'Failed to fetch leads' });
-  }
+  });
 });
 
 // Einzel Lead abrufen
 app.get('/api/leads/:id', authenticateToken, (req, res) => {
-  try {
-    const lead = db.prepare('SELECT * FROM leads WHERE id = ?').get(req.params.id);
-
+  db.get('SELECT * FROM leads WHERE id = ?', [req.params.id], (err, lead) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to fetch lead' });
+    }
     if (!lead) {
       return res.status(404).json({ error: 'Lead not found' });
     }
-
     res.json(lead);
-  } catch (error) {
-    console.error('Error fetching lead:', error);
-    res.status(500).json({ error: 'Failed to fetch lead' });
-  }
+  });
 });
 
 // Lead Status aktualisieren
 app.patch('/api/leads/:id', authenticateToken, (req, res) => {
-  try {
-    const { status } = req.body;
+  const { status } = req.body;
 
-    db.prepare(`
-      UPDATE leads SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?
-    `).run(status, req.params.id);
-
-    const lead = db.prepare('SELECT * FROM leads WHERE id = ?').get(req.params.id);
-    res.json(lead);
-  } catch (error) {
-    console.error('Error updating lead:', error);
-    res.status(500).json({ error: 'Failed to update lead' });
-  }
+  db.run(
+    'UPDATE leads SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+    [status, req.params.id],
+    function(err) {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to update lead' });
+      }
+      db.get('SELECT * FROM leads WHERE id = ?', [req.params.id], (err, lead) => {
+        res.json(lead);
+      });
+    }
+  );
 });
 
-// E-Mail auf Datenlecks prüfen (vereinfacht - nur Mock)
-app.post('/api/check-email', async (req, res) => {
+// E-Mail auf Datenlecks prüfen (Mock)
+app.post('/api/check-email', (req, res) => {
   const { email } = req.body;
 
   if (!email) {
     return res.status(400).json({ error: 'Email is required' });
   }
 
-  // Hier könnte man echte HaveIBeenPwned API integrieren
-  // Für Demo: Simuliere zufällige Ergebnisse
   const mockBreaches = ['LinkedIn', 'Facebook', 'Dropbox', 'Adobe'];
   const breachCount = Math.random() > 0.5 ? Math.floor(Math.random() * 3) : 0;
   const breaches = mockBreaches.slice(0, breachCount);
@@ -246,26 +260,6 @@ app.post('/api/check-email', async (req, res) => {
     breaches,
     cached: false
   });
-});
-
-// Appointments
-app.post('/api/appointments', authenticateToken, (req, res) => {
-  try {
-    const { lead_id, date, time, type, notes } = req.body;
-
-    const stmt = db.prepare(`
-      INSERT INTO appointments (lead_id, date, time, type, notes)
-      VALUES (?, ?, ?, ?, ?)
-    `);
-
-    const result = stmt.run(lead_id, date, time, type, notes);
-    const appointment = db.prepare('SELECT * FROM appointments WHERE id = ?').get(result.lastInsertRowid);
-
-    res.status(201).json(appointment);
-  } catch (error) {
-    console.error('Error creating appointment:', error);
-    res.status(500).json({ error: 'Failed to create appointment' });
-  }
 });
 
 // Server starten
