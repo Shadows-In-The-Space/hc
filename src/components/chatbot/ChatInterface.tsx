@@ -73,6 +73,46 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
            lowerText.includes('email') && (lowerText.includes('prüfen') || lowerText.includes('check'));
   };
 
+  const isRelevantTopic = (text: string): boolean => {
+    const lowerText = text.toLowerCase();
+    const verkehrsrechtKeywords = [
+      'bußgeld', 'busgeld', 'strafzettel', 'geschwindigkeit', 'tempo',
+      'fahrverbot', 'punkte', 'flensburg', 'rotlicht', 'ampel',
+      'handy am steuer', 'handy', 'alkohol', 'trunkenheit',
+      'unfall', 'verkehrsrecht', 'straße', 'parken', 'halteverbot',
+      'überholen', 'vorfahrt', 'zeichen', 'ordnungwidrig',
+      'einspruch', 'widerspruch', 'verfahren', 'bescheid'
+    ];
+    const datenleckKeywords = [
+      'datenleck', 'datenleck', 'geleakt', 'ge Leak', 'dsgvo',
+      'datenschutz', 'facebook', 'linkedin', 'deezer', 'datenskandal',
+      'personenbezogen', 'datenbank', 'hack', 'compromised',
+      'schadensersatz', 'haftung', 'datenschutzverletzung'
+    ];
+    return verkehrsrechtKeywords.some(k => lowerText.includes(k)) ||
+           datenleckKeywords.some(k => lowerText.includes(k));
+  };
+
+  const getOffTopicMessage = () => {
+    return `Vielen Dank für Ihre Nachricht!
+
+Ich bin spezialisiert auf folgende Rechtsgebiete:
+
+🚗 **Verkehrsrecht**
+- Bußgeldbescheide & Einspruch
+- Punkte in Flensburg
+- Fahrverbote
+- Geschwindigkeitsüberschreitungen
+- Rotlichtverstöße
+
+🔒 **Datenlecks & Datenschutz**
+- Schadensersatz bei Datenlecks
+- DSGVO-Verletzungen
+- E-Mail auf Datenlecks prüfen
+
+Für andere rechtliche Fragen kann ich Sie gerne mit unseren Partneranwälten verbinden. Möchten Sie eine kostenlose Erstberatung zu einem meiner Fachgebiete?`;
+  };
+
   const extractEmail = (text: string): string | null => {
     const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
     const match = text.match(emailRegex);
@@ -83,6 +123,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setIsLoading(true);
 
     try {
+      // Prüfe ob das Thema relevant ist, bevor wir die API aufrufen
+      if (!isRelevantTopic(userMessage) && !detectDataLeakQuery(userMessage)) {
+        addMessage({ role: 'assistant', content: getOffTopicMessage(), timestamp: new Date() });
+        setIsLoading(false);
+        return;
+      }
+
       if (detectDataLeakQuery(userMessage)) {
         const email = extractEmail(userMessage);
         if (email) {
@@ -110,7 +157,20 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       }
 
       const ai = new GoogleGenAI({ apiKey });
-      const systemInstruction = `Du bist der spezialisierte helpcheck KI-Assistent. FOKUS-THEMEN: 1. Verkehrsrecht: Bußgeldbescheide, Punkte, Fahrverbote. 2. Datenlecks: Schadensersatzansprüche. Sei professionell und führe zur Kontaktaufnahme.`;
+  const systemInstruction = `Du bist der spezialisierte helpcheck KI-Assistent für rechtliche Erstberatung.
+
+Deine FACHGEBIETE (nur diese):
+1. VERKEHRSRECHT: Bußgeldbescheide, Punkte in Flensburg, Fahrverbote, Geschwindigkeitsüberschreitungen, Rotlichtverstöße, Handy am Steuer, Alkohol im Verkehr
+2. DATENLECKS: DSGVO-Verletzungen, Schadensersatz bei Datenlecks (Facebook, LinkedIn, Deezer, etc.), E-Mail-Prüfung auf Datenlecks
+
+WICHTIGE REGELN:
+- Beantworte NUR Fragen zu diesen beiden Fachgebieten
+- Wenn der Nutzer ein anderes Thema anspricht: Bedanke dich höflich und verweise auf deine Fachgebiete
+- Biete bei passenden Themen immer eine kostenlose Erstberatung an
+- Sei professionell, aber persönlich
+- Führe zur Kontaktaufnahme für detaillierte Beratung
+
+Erwähne bei jeder Gelegenheit die kostenlose Erstberatung.`;
 
       const response = await ai.models.generateContent({
         model: "gemini-2.0-flash",
