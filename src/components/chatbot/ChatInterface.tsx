@@ -73,14 +73,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const detectDataLeakQuery = (text: string): boolean => {
     const lowerText = text.toLowerCase();
     return lowerText.includes('datenleck') ||
+           lowerText.includes('daten leak') ||
            lowerText.includes('geleakt') ||
-           lowerText.includes('email') && (lowerText.includes('prüfen') || lowerText.includes('check'));
+           lowerText.includes('leak') ||
+           (lowerText.includes('email') && (lowerText.includes('prüfen') || lowerText.includes('check') || lowerText.includes('test')));
   };
 
   const isRelevantTopic = (text: string): boolean => {
     const lowerText = text.toLowerCase();
     const verkehrsrechtKeywords = [
-      'bußgeld', 'busgeld', 'strafzettel', 'geschwindigkeit', 'tempo',
+      'bußgeld', 'busgeld', 'bußgeldbescheid', 'strafzettel', 'geschwindigkeit', 'tempo',
       'fahrverbot', 'punkte', 'flensburg', 'rotlicht', 'ampel',
       'handy am steuer', 'handy', 'alkohol', 'trunkenheit',
       'unfall', 'verkehrsrecht', 'straße', 'parken', 'halteverbot',
@@ -197,8 +199,35 @@ Erwähne bei jeder Gelegenheit die kostenlose Erstberatung.`;
     }
   }, [messages, addMessage, setCurrentStep, setIsDataLeakCheck]);
 
+  // Rate-Limit: Max 6 Nachrichten pro Minute
+  const [messageTimestamps, setMessageTimestamps] = useState<number[]>([]);
+
+  const checkRateLimit = (): boolean => {
+    const now = Date.now();
+    const oneMinute = 60 * 1000;
+    const recentMessages = messageTimestamps.filter(ts => now - ts < oneMinute);
+
+    if (recentMessages.length >= 6) {
+      return false; // Rate limit überschritten
+    }
+
+    setMessageTimestamps([...recentMessages, now]);
+    return true;
+  };
+
   const handleSend = async (text: string = input) => {
     if (!text.trim() || isLoading) return;
+
+    // Rate-Limit Prüfung
+    if (!checkRateLimit()) {
+      addMessage({
+        role: 'assistant',
+        content: 'Entschuldigung, Sie haben zu viele Nachrichten gesendet. Bitte warten Sie eine Minute, bevor Sie weitere Nachrichten senden. Dies dient zum Schutz vor Missbrauch.',
+        timestamp: new Date()
+      });
+      return;
+    }
+
     const userMsg: Message = { role: 'user', content: text, timestamp: new Date() };
     addMessage(userMsg);
     setInput('');
@@ -208,12 +237,15 @@ Erwähne bei jeder Gelegenheit die kostenlose Erstberatung.`;
   const handleQuickAction = (actionId: string) => {
     switch (actionId) {
       case 'verkehrsrecht':
-        handleSend('Ich habe einen Bußgeldbescheid erhalten und möchte wissen, ob ich dagegen vorgehen kann.');
+        handleSend('Ich habe einen Bußgeldbescheid erhalten und möchte wissen, ob ich dagegen Einspruch einlegen kann. Bußgeld');
         break;
       case 'datenleck':
-        handleSend('Ich möchte prüfen, ob meine Daten in einem Leak enthalten sind.');
+        handleSend('Ich möchte meine E-Mail-Adresse auf Datenleck prüfen. Datenleck');
         break;
       case 'beratung':
+        // Wechsle zum Lead-Formular
+        addMessage({ role: 'user', content: 'Ich möchte eine kostenlose Erstberatung.', timestamp: new Date() });
+        addMessage({ role: 'assistant', content: 'Gerne! Bitte füllen Sie das Formular aus, damit wir Ihnen eine kostenlose Erstberatung anbieten können.', timestamp: new Date() });
         setCurrentStep('lead');
         break;
     }
