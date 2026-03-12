@@ -226,19 +226,19 @@ export default function AboutUs() {
               className="p-6 bg-slate-50 rounded-2xl text-center">
               <Mail className="mx-auto text-teal-500 mb-3" size={24} />
               <h3 className="font-bold text-slate-900 mb-1">E-Mail</h3>
-              <p className="text-slate-500 text-sm">kontakt@helpcheck.de</p>
+              <p className="text-slate-500 text-sm">help@helpcheck.de</p>
             </motion.div>
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
               className="p-6 bg-slate-50 rounded-2xl text-center">
               <Phone className="mx-auto text-teal-500 mb-3" size={24} />
               <h3 className="font-bold text-slate-900 mb-1">Telefon</h3>
-              <p className="text-slate-500 text-sm">+49 (0) 211 542413 0</p>
+              <p className="text-slate-500 text-sm">0211 33 99 66 00</p>
             </motion.div>
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
               className="p-6 bg-slate-50 rounded-2xl text-center">
               <MapPin className="mx-auto text-teal-500 mb-3" size={24} />
               <h3 className="font-bold text-slate-900 mb-1">Adresse</h3>
-              <p className="text-slate-500 text-sm">Düsseldorf, Deutschland</p>
+              <p className="text-slate-500 text-sm">Georg-Glock-Str. 8, 40474 Düsseldorf</p>
             </motion.div>
           </div>
         </div>

@@ -31,6 +31,7 @@ import Jobs from './pages/Jobs';
 import Presse from './pages/Presse';
 import Article from './pages/Article';
 import Admin from './pages/Admin';
+import FAQ from './pages/FAQ';
 
 // --- Shared Components ---
 
@@ -96,7 +97,7 @@ const Footer = () => (
         <div>
           <h5 className="font-bold mb-6">Informationen</h5>
           <ul className="space-y-3 text-sm text-white/60">
-            <li><Link to="/verkehrsrecht#faq" className="hover:text-white cursor-pointer">Häufige Fragen</Link></li>
+            <li><Link to="/faq" className="hover:text-white cursor-pointer">Häufige Fragen</Link></li>
             <li><Link to="/ratgeber" className="hover:text-white cursor-pointer">Ratgeber</Link></li>
             <li><Link to="/presse" className="hover:text-white cursor-pointer">Presse</Link></li>
             <li><Link to="/contact" className="hover:text-white cursor-pointer">Kontakt</Link></li>
@@ -195,6 +196,7 @@ const AppContent: React.FC = () => {
         <Route path="/datenschutz" element={<Datenschutz />} />
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/presse" element={<Presse />} />
+        <Route path="/faq" element={<FAQ />} />
         <Route path="/admin" element={<Admin />} />
       </Routes>
       {!isSpecialPage && <FloatingWidget />}

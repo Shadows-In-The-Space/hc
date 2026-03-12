@@ -28,31 +28,32 @@ export default function Impressum() {
               <h2 className="text-xl font-bold text-slate-900 mb-4">Angaben gemäß § 5 TMG</h2>
               <div className="text-slate-600 space-y-2">
                 <p>helpcheck GmbH</p>
-                <p>Musterstraße 123</p>
-                <p>10115 Berlin</p>
+                <p>Georg-Glock-Str. 8</p>
+                <p>40474 Düsseldorf</p>
               </div>
             </div>
 
             <div>
               <h2 className="text-xl font-bold text-slate-900 mb-4">Vertreten durch</h2>
               <div className="text-slate-600 space-y-2">
-                <p>Geschäftsführer: Max Mustermann</p>
+                <p>Geschäftsführer: Phil Sokowicz</p>
+                <p>Geschäftsführer: Dr. Frank Breitschwerdt</p>
               </div>
             </div>
 
             <div>
               <h2 className="text-xl font-bold text-slate-900 mb-4">Kontakt</h2>
               <div className="text-slate-600 space-y-2">
-                <p className="flex items-center gap-2"><Mail size={16} className="text-teal-500" /> kontakt@helpcheck.de</p>
-                <p className="flex items-center gap-2"><Phone size={16} className="text-teal-500" /> +49 (0) 30 12345678</p>
-                <p className="flex items-center gap-2"><MapPin size={16} className="text-teal-500" /> Berlin, Deutschland</p>
+                <p className="flex items-center gap-2"><Mail size={16} className="text-teal-500" /> help@helpcheck.de</p>
+                <p className="flex items-center gap-2"><Phone size={16} className="text-teal-500" /> 0211 33 99 66 00</p>
+                <p className="flex items-center gap-2"><MapPin size={16} className="text-teal-500" /> Düsseldorf, Deutschland</p>
               </div>
             </div>
 
             <div>
               <h2 className="text-xl font-bold text-slate-900 mb-4">Registereintrag</h2>
               <div className="text-slate-600 space-y-2">
-                <p>Handelsregister: Amtsgericht Berlin</p>
+                <p>Handelsregister: Amtsgericht Düsseldorf</p>
                 <p>Registernummer: HRB 123456</p>
               </div>
             </div>
@@ -68,9 +69,8 @@ export default function Impressum() {
               <h2 className="text-xl font-bold text-slate-900 mb-4">Verantwortlich für den Inhalt</h2>
               <div className="text-slate-600 space-y-2">
                 <p>helpcheck GmbH</p>
-                <p>Max Mustermann</p>
-                <p>Musterstraße 123</p>
-                <p>10115 Berlin</p>
+                <p>Georg-Glock-Str. 8</p>
+                <p>40474 Düsseldorf</p>
               </div>
             </div>
 

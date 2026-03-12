@@ -167,13 +167,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         {/* Glassmorphism Container mit Glow-Effekt */}
         <div className="relative">
           {/* Glow Effect */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-teal-400/30 via-cyan-400/30 to-blue-400/30 rounded-3xl blur-xl opacity-70" />
+          <div className="absolute -inset-2 bg-gradient-to-r from-teal-400/50 via-cyan-400/50 to-blue-400/50 rounded-3xl blur-2xl opacity-80" />
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5 }}
-            className="relative bg-white/70 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/40 overflow-hidden flex flex-col"
+            className="relative bg-white/40 backdrop-blur-3xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden flex flex-col"
             style={{ maxHeight: '560px' }}
           >
             {/* Glass Header mit subtle Gradient */}
@@ -282,7 +282,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
 
           {/* Glass Input Area */}
-          <div className="p-4 border-t border-white/20 bg-white/40 backdrop-blur-md">
+          <div className="p-4 border-t border-white/10 bg-white/20 backdrop-blur-xl">
             {/* File Upload Preview */}
             {uploadedFile && (
               <div className="mb-3 flex items-center gap-2 p-2 bg-teal-50 rounded-lg">
@@ -320,7 +320,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 onKeyDown={e => e.key === 'Enter' && handleSend()}
                 placeholder="Nachricht eingeben..."
                 whileFocus={{ scale: 1.01 }}
-                className="flex-1 px-5 py-3.5 bg-white/60 backdrop-blur-sm border border-white/40 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:bg-white/80 transition-all text-sm shadow-inner"
+                className="flex-1 px-5 py-3.5 bg-white/30 backdrop-blur-lg border border-white/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:bg-white/40 transition-all text-sm shadow-inner"
               />
               <motion.button
                 onClick={() => handleSend()}

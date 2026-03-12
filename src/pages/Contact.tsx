@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ScrollReveal, AnimatedCard } from '../components/ScrollReveal';
+import { motion } from 'motion/react';
 import {
   Mail,
   Phone,
@@ -20,9 +21,9 @@ export default function Contact() {
   };
 
   const contactInfo = [
-    { icon: Mail, title: "E-Mail", content: "kontakt@helpcheck.de", desc: "Wir antworten innerhalb von 24h" },
-    { icon: Phone, title: "Telefon", content: "+49 (0) 30 12345678", desc: "Mo-Fr 9-18 Uhr" },
-    { icon: MapPin, title: "Adresse", content: "Berlin, Deutschland", desc: "Bundesweit tätig" }
+    { icon: Mail, title: "E-Mail", content: "help@helpcheck.de", desc: "Wir antworten innerhalb von 24h" },
+    { icon: Phone, title: "Telefon", content: "0211 33 99 66 00", desc: "Mo-Fr 9-18 Uhr" },
+    { icon: MapPin, title: "Adresse", content: "Georg-Glock-Str. 8, 40474 Düsseldorf", desc: "Bundesweit tätig" }
   ];
 
   return (
