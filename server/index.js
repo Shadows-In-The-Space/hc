@@ -242,7 +242,19 @@ app.patch('/api/leads/:id', authenticateToken, (req, res) => {
   );
 });
 
-// E-Mail auf Datenlecks prüfen (Mock)
+// Lead löschen
+app.delete('/api/leads/:id', authenticateToken, (req, res) => {
+  db.run('DELETE FROM leads WHERE id = ?', [req.params.id], function(err) {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to delete lead' });
+    }
+    res.json({ success: true });
+  });
+});
+
+// E-Mail auf Datenlecks prüfen (Firefox Monitor API)
+const https = require('https');
+
 app.post('/api/check-email', (req, res) => {
   const { email } = req.body;
 
@@ -250,15 +262,56 @@ app.post('/api/check-email', (req, res) => {
     return res.status(400).json({ error: 'Email is required' });
   }
 
-  const mockBreaches = ['LinkedIn', 'Facebook', 'Dropbox', 'Adobe'];
-  const breachCount = Math.random() > 0.5 ? Math.floor(Math.random() * 3) : 0;
-  const breaches = mockBreaches.slice(0, breachCount);
+  // Firefox Monitor API (kostenlos, keine Auth erforderlich)
+  const apiUrl = `https://monitor.mozilla.org/api/v1/scan/${encodeURIComponent(email)}`;
 
-  res.json({
-    email,
-    breach_count: breachCount,
-    breaches,
-    cached: false
+  https.get(apiUrl, (apiRes) => {
+    let data = '';
+
+    apiRes.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    apiRes.on('end', () => {
+      if (apiRes.statusCode === 404 || apiRes.statusCode === 200) {
+        try {
+          const result = JSON.parse(data);
+          const breaches = result.breaches || [];
+          const breachNames = breaches.map((b) => b.Name || b.domain || 'Unbekannt');
+          res.json({
+            email,
+            breach_count: breaches.length,
+            breaches: breachNames,
+            cached: false
+          });
+        } catch (e) {
+          res.json({
+            email,
+            breach_count: 0,
+            breaches: [],
+            cached: false
+          });
+        }
+      } else {
+        console.log('Firefox Monitor API Error:', apiRes.statusCode);
+        res.json({
+          email,
+          breach_count: 0,
+          breaches: [],
+          cached: false,
+          error: 'API vorübergehend nicht verfügbar'
+        });
+      }
+    });
+  }).on('error', (err) => {
+    console.error('Firefox Monitor API Error:', err);
+    res.json({
+      email,
+      breach_count: 0,
+      breaches: [],
+      cached: false,
+      error: 'Verbindungsfehler'
+    });
   });
 });
 

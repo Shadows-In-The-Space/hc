@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Lock, User, Eye, EyeOff, Users, AlertCircle, CheckCircle, Clock, LogOut, ChevronDown, ChevronUp, MessageCircle, FileText } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, Users, AlertCircle, CheckCircle, Clock, LogOut, ChevronDown, ChevronUp, MessageCircle, FileText, Trash2 } from 'lucide-react';
 import { getLeads, Lead } from '../services/api';
 
 const AdminPage: React.FC = () => {
@@ -76,6 +76,28 @@ const AdminPage: React.FC = () => {
     setLeads([]);
     setUsername('');
     setPassword('');
+  };
+
+  const handleDeleteLead = async (leadId: number) => {
+    if (!confirm('Möchten Sie diesen Lead wirklich löschen?')) return;
+
+    const token = localStorage.getItem('adminToken');
+    if (!token) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/leads/${leadId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setLeads(leads.filter(l => l.id !== leadId));
+      }
+    } catch (error) {
+      console.error('Failed to delete lead:', error);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -271,6 +293,7 @@ const AdminPage: React.FC = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quelle</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chat</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aktionen</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -312,6 +335,15 @@ const AdminPage: React.FC = () => {
                         ) : (
                           <span className="text-gray-400 text-xs">-</span>
                         )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => handleDeleteLead(lead.id)}
+                          className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                          title="Lead löschen"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </td>
                     </tr>
                   ))}
