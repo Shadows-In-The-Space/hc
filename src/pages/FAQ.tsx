@@ -45,7 +45,7 @@ const faqData: Record<string, FAQ[]> = {
     },
     {
       question: "Ich habe Post zu meinem laufenden Verfahren erhalten. Was soll ich tun?",
-      answer: "Bitte laden Sie das Schreiben zur Bearbeitung unter dem Reiter „Unterlagen hinzufügen" in Ihrem helpcheck-Kundenbereich hoch. Wir werden bei Rückfragen selbstverständlich auf Sie zukommen."
+      answer: 'Bitte laden Sie das Schreiben zur Bearbeitung unter dem Reiter "Unterlagen hinzufügen" in Ihrem helpcheck-Kundenbereich hoch. Wir werden bei Rückfragen selbstverständlich auf Sie zukommen.'
     }
   ],
   arbeitsrecht: [
@@ -135,7 +135,7 @@ const faqData: Record<string, FAQ[]> = {
     },
     {
       question: "Was kostet mich ein Widerruf mit helpcheck?",
-      answer: "Erst wenn wir Ihren Widerruf erfolgreich durchsetzen konnten, erhält helpcheck ein Honorar zwischen 29,75% und 39,75% (je nach Service-Modell) auf den zusätzlich erzielten Mehrwert. Der Mehrwert ist der Betrag, den Sie über die reguläre Auszahlung bei Beendigung Ihres Vertrages hinaus erhalten, bzw. rückwirkend bei bereits gekündigten Verträgen erhalten.\n\nSollten Sie sich für das Service-Modell „helpcheck Kostenairbag" entscheiden, werden alle anfallenden Anwalts- und Gerichtskosten von helpcheck getragen. Hierfür erhalten wir im Erfolgsfall ein Honorar i.H.v. 39,75% auf den erzielten Mehrwert.\n\nVerfügen Sie über eine Rechtsschutzversicherung, erhalten wir im Erfolgsfall eine reduzierte Provision i.H.v. 29,75% auf den erzielten Mehrwert. In diesem Fall ist maximal ein möglicher Selbstbehalt Ihrer Rechtsschutzversicherung zu zahlen."
+      answer: 'Erst wenn wir Ihren Widerruf erfolgreich durchsetzen konnten, erhält helpcheck ein Honorar zwischen 29,75% und 39,75% (je nach Service-Modell) auf den zusätzlich erzielten Mehrwert. Der Mehrwert ist der Betrag, den Sie über die reguläre Auszahlung bei Beendigung Ihres Vertrages hinaus erhalten, bzw. rückwirkend bei bereits gekündigten Verträgen erhalten.\n\nSollten Sie sich für das Service-Modell "helpcheck Kostenairbag" entscheiden, werden alle anfallenden Anwalts- und Gerichtskosten von helpcheck getragen. Hierfür erhalten wir im Erfolgsfall ein Honorar i.H.v. 39,75% auf den erzielten Mehrwert.\n\nVerfügen Sie über eine Rechtsschutzversicherung, erhalten wir im Erfolgsfall eine reduzierte Provision i.H.v. 29,75% auf den erzielten Mehrwert. In diesem Fall ist maximal ein möglicher Selbstbehalt Ihrer Rechtsschutzversicherung zu zahlen.'
     },
     {
       question: "Wie lange dauert das Verfahren eines Widerrufs?",
