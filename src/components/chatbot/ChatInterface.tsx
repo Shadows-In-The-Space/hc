@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from 'motion/react';
 import {
   Send, X, Bot, User, Car, Shield, Loader2, Sparkles, Paperclip, FileText
 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
 import { useChat, Message } from './ChatContext';
 import { checkEmailBreach, formatBreachResultForChat } from './dataLeakService';
 import { LeadForm, AppointmentBooking } from './LeadForm';
+import { submitLead } from '../../services/api';
 
 const QUICK_ACTIONS = [
   { id: 'verkehrsrecht', label: '🚗 Bußgeld / Verkehrsrecht', icon: Car },
@@ -40,6 +40,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [leadSubmitted, setLeadSubmitted] = useState(false);
+  // State-basiertes Lead-Tracking: sammelt Daten inkrementell
+  const collectedLeadRef = useRef<{ name?: string; email?: string; phone?: string; topic?: string }>({});
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -81,42 +84,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   const isRelevantTopic = (text: string): boolean => {
     const lowerText = text.toLowerCase();
-    const verkehrsrechtKeywords = [
-      'bußgeld', 'busgeld', 'bußgeldbescheid', 'strafzettel', 'geschwindigkeit', 'tempo',
-      'fahrverbot', 'punkte', 'flensburg', 'rotlicht', 'ampel',
-      'handy am steuer', 'handy', 'alkohol', 'trunkenheit',
-      'unfall', 'verkehrsrecht', 'straße', 'parken', 'halteverbot',
-      'überholen', 'vorfahrt', 'zeichen', 'ordnungwidrig',
-      'einspruch', 'widerspruch', 'verfahren', 'bescheid'
-    ];
-    const datenleckKeywords = [
-      'datenleck', 'datenleck', 'geleakt', 'ge Leak', 'dsgvo',
-      'datenschutz', 'facebook', 'linkedin', 'deezer', 'datenskandal',
-      'personenbezogen', 'datenbank', 'hack', 'compromised',
-      'schadensersatz', 'haftung', 'datenschutzverletzung'
-    ];
-    return verkehrsrechtKeywords.some(k => lowerText.includes(k)) ||
-           datenleckKeywords.some(k => lowerText.includes(k));
+    // Nur offensichtlich irrelevante Nachrichten blocken (Spam, einzelne Zeichen)
+    // Gemini's System-Prompt handhabt Off-Topic-Themen selbst
+    if (lowerText.trim().length < 2) return false;
+    return true;
   };
 
   const getOffTopicMessage = () => {
-    return `Vielen Dank für Ihre Nachricht!
-
-Ich bin spezialisiert auf folgende Rechtsgebiete:
-
-🚗 **Verkehrsrecht**
-- Bußgeldbescheide & Einspruch
-- Punkte in Flensburg
-- Fahrverbote
-- Geschwindigkeitsüberschreitungen
-- Rotlichtverstöße
-
-🔒 **Datenlecks & Datenschutz**
-- Schadensersatz bei Datenlecks
-- DSGVO-Verletzungen
-- E-Mail auf Datenlecks prüfen
-
-Für andere rechtliche Fragen kann ich Sie gerne mit unseren Partneranwälten verbinden. Möchten Sie eine kostenlose Erstberatung zu einem meiner Fachgebiete?`;
+    return 'Entschuldigung, bitte geben Sie mindestens zwei Zeichen ein.';
   };
 
   const extractEmail = (text: string): string | null => {
@@ -125,12 +100,93 @@ Für andere rechtliche Fragen kann ich Sie gerne mit unseren Partneranwälten ve
     return match ? match[0] : null;
   };
 
+  const parseLeadFromResponse = (text: string): { name: string; email: string; phone: string; topic: string } | null => {
+    // Try structured marker format (flexible)
+    const markerMatch = text.match(/---\s*LEAD[_\s]DATA\s*---[\s\S]*?Name:\s*\**([^\n*]+)\**[\s\S]*?Email:\s*\**([^\n*]+)\**[\s\S]*?Telefon:\s*\**([^\n*]+)\**[\s\S]*?Thema:\s*\**([^\n*]+)\**[\s\S]*?---\s*END[_\s]LEAD\s*---/i);
+    if (markerMatch) {
+      const email = markerMatch[2].trim();
+      if (/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+        return {
+          name: markerMatch[1].trim(),
+          email,
+          phone: markerMatch[3].trim().toLowerCase() === 'nicht angegeben' ? '' : markerMatch[3].trim(),
+          topic: markerMatch[4].trim().toLowerCase(),
+        };
+      }
+    }
+
+    // Fallback: find name + email anywhere in text
+    const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+    const nameMatch = text.match(/(?:Name|Vielen Dank)[:\s,]*\**([A-ZÄÖÜa-zäöüß][A-ZÄÖÜa-zäöüß\s.-]{1,40})\**/);
+    if (emailMatch && nameMatch) {
+      return {
+        name: nameMatch[1].trim(),
+        email: emailMatch[0].trim(),
+        phone: '',
+        topic: 'allgemein',
+      };
+    }
+    return null;
+  };
+
+  // Erkennt welche Daten der Bot gerade fragt anhand der letzten Bot-Nachricht
+  const detectWhatBotAsked = (botMessage: string): 'name' | 'email' | 'phone' | null => {
+    const lower = botMessage.toLowerCase();
+    if ((lower.includes('name') && (lower.includes('wie') || lower.includes('ihr') || lower.includes('verraten') || lower.includes('nennen'))) ||
+        lower.includes('wie heißen') || lower.includes('ihren namen')) {
+      return 'name';
+    }
+    if (lower.includes('e-mail') || lower.includes('email') || lower.includes('mail-adresse') || lower.includes('mailadresse')) {
+      return 'email';
+    }
+    if (lower.includes('telefon') || lower.includes('nummer') || lower.includes('rückruf')) {
+      return 'phone';
+    }
+    return null;
+  };
+
+  // Sammelt Lead-Daten inkrementell aus der User-Eingabe basierend auf der Bot-Frage
+  const collectLeadField = (userMessage: string, lastBotMessage: string): void => {
+    const asked = detectWhatBotAsked(lastBotMessage);
+    if (asked === 'name' && !userMessage.includes('@') && userMessage.trim().length > 1 && userMessage.trim().length < 60) {
+      collectedLeadRef.current.name = userMessage.trim();
+    }
+    if (asked === 'email' || (!asked && userMessage.includes('@'))) {
+      const emailMatch = userMessage.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+      if (emailMatch) {
+        collectedLeadRef.current.email = emailMatch[0];
+      }
+    }
+    if (asked === 'phone') {
+      const digitsOnly = userMessage.replace(/[^0-9+]/g, '');
+      if (digitsOnly.length >= 6) {
+        collectedLeadRef.current.phone = userMessage.trim();
+      }
+    }
+  };
+
+  // Prüfe ob wir gerade im Lead-Erfassungsmodus sind
+  const isCollectingLeadData = useCallback((): boolean => {
+    const lastAssistantMsg = [...messages].reverse().find(m => m.role === 'assistant');
+    if (!lastAssistantMsg) return false;
+    return detectWhatBotAsked(lastAssistantMsg.content) !== null;
+  }, [messages]);
+
   const handleAIResponse = useCallback(async (userMessage: string) => {
     setIsLoading(true);
 
     try {
+      // LEAD-TRACKING: Sammle Daten aus User-Eingabe basierend auf letzter Bot-Frage
+      const lastBotMsg = [...messages].reverse().find(m => m.role === 'assistant');
+      if (lastBotMsg) {
+        collectLeadField(userMessage, lastBotMsg.content);
+      }
+
+      // Wenn wir gerade Lead-Daten sammeln, IMMER an Gemini weiterleiten (kein Topic-Check)
+      const collectingLead = isCollectingLeadData();
+
       // Prüfe ob das Thema relevant ist, bevor wir die API aufrufen
-      if (!isRelevantTopic(userMessage) && !detectDataLeakQuery(userMessage)) {
+      if (!collectingLead && !isRelevantTopic(userMessage) && !detectDataLeakQuery(userMessage)) {
         addMessage({ role: 'assistant', content: getOffTopicMessage(), timestamp: new Date() });
         setIsLoading(false);
         return;
@@ -155,40 +211,206 @@ Für andere rechtliche Fragen kann ich Sie gerne mit unseren Partneranwälten ve
         }
       }
 
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.GEMINI_API_KEY;
+      const apiKey = process.env.OPENROUTER_API_KEY;
       if (!apiKey) {
         addMessage({ role: 'assistant', content: 'Entschuldigung, die KI-Integration ist momentan nicht konfiguriert. Bitte kontaktieren Sie uns direkt.', timestamp: new Date() });
         setIsLoading(false);
         return;
       }
 
-      const ai = new GoogleGenAI({ apiKey });
-  const systemInstruction = `Du bist der spezialisierte helpcheck KI-Assistent für rechtliche Erstberatung.
+      const systemInstruction = `Du bist der helpcheck KI-Rechtsassistent für kostenlose Erstberatung im deutschen Recht.
 
-Deine FACHGEBIETE (nur diese):
-1. VERKEHRSRECHT: Bußgeldbescheide, Punkte in Flensburg, Fahrverbote, Geschwindigkeitsüberschreitungen, Rotlichtverstöße, Handy am Steuer, Alkohol im Verkehr
-2. DATENLECKS: DSGVO-Verletzungen, Schadensersatz bei Datenlecks (Facebook, LinkedIn, Deezer, etc.), E-Mail-Prüfung auf Datenlecks
+═══ DEINE FACHGEBIETE ═══
 
-WICHTIGE REGELN:
-- Beantworte NUR Fragen zu diesen beiden Fachgebieten
-- Wenn der Nutzer ein anderes Thema anspricht: Bedanke dich höflich und verweise auf deine Fachgebiete
-- Biete bei passenden Themen immer eine kostenlose Erstberatung an
-- Sei professionell, aber persönlich
-- Führe zur Kontaktaufnahme für detaillierte Beratung
+1. VERKEHRSRECHT
+2. DATENLECKS & DATENSCHUTZ (DSGVO)
 
-Erwähne bei jeder Gelegenheit die kostenlose Erstberatung.`;
+Bei anderen Themen: Bedanke dich höflich, erkläre kurz deine Fachgebiete und biete Hilfe an.
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: [...messages, { role: 'user' as const, parts: [{ text: userMessage }] }],
-        config: { systemInstruction, temperature: 0.7, maxOutputTokens: 500 }
+═══ VERKEHRSRECHT – BERATUNGSWISSEN ═══
+
+GESCHWINDIGKEIT (Bußgeld-Tabelle Innerorts):
+- Bis 10 km/h: 30€, 0 Punkte
+- 11-15 km/h: 50€, 1 Punkt
+- 16-20 km/h: 70€, 1 Punkt
+- 21-25 km/h: 115€, 2 Punkte, 1 Monat Fahrverbot
+- 26-30 km/h: 180€, 2 Punkte, 2 Monate Fahrverbot
+Außerorts sind die Strafen etwas geringer.
+Wichtig: Ca. jeder 3. Bußgeldbescheid hat formale oder technische Fehler!
+
+ROTLICHTVERSTOSS:
+- Unter 1 Sekunde rot: 90€, 1 Punkt
+- Über 1 Sekunde rot: 200€, 2 Punkte, 1 Monat Fahrverbot
+- Mit Gefährdung/Unfall: 360€, 2 Punkte, 1 Monat Fahrverbot
+Anfechtbar bei: unklarer Ampelphase, fehlerhafter Kamerainstallation, unklarer Fahrzeugidentifikation.
+
+HANDY AM STEUER:
+- Erstverstoß: 100€, 1 Punkt
+- Wiederholungsfall: 200€, 2 Punkte, 1 Monat Fahrverbot
+- Mit Gefährdung: 150€, 2 Punkte, 1 Monat Fahrverbot
+Anfechtbar wenn: Foto uneindeutig, Navi-Nutzung, Fahrzeug stand.
+
+FAHRVERBOT:
+- Kann oft vermieden werden durch: Umwandlung in höhere Geldstrafe, Härtfallregelung (berufliche Notwendigkeit), Verkehrspsychologen-Kurs
+- 100% der Fahrverbote können potenziell angefochten werden
+
+EINSPRUCH-FRIST: 14 Tage ab Zustellung des Bußgeldbescheids!
+
+ERFOLGSQUOTE: 95% bei Verkehrsrecht-Fällen
+
+MÖGLICHE ANFECHTUNGSGRÜNDE (allgemein):
+1. Messfehler (Blitzer, Radar, Laser)
+2. Fehlende/fehlerhafte Toleranzabzüge
+3. Unklare Beschilderung
+4. Fahrzeug nicht eindeutig identifiziert
+5. Formfehler im Bescheid
+6. Eichung des Messgeräts abgelaufen
+
+═══ DATENLECKS & DSGVO – BERATUNGSWISSEN ═══
+
+FACEBOOK-DATENLECK:
+- 533+ Millionen Nutzer betroffen weltweit, 106 Länder
+- Geleakte Daten: Name, Telefonnummer, E-Mail, Standort, Geburtsdatum, Geschlecht, Beruf
+- Schadensersatz möglich: Ja, nach Art. 82 DSGVO
+
+LINKEDIN-DATENLECK:
+- 700+ Millionen Datensätze betroffen
+- Daten im Darknet verkauft
+
+DEEZER-DATENLECK:
+- 200+ Millionen Datensätze kompromittiert
+
+SCHADENSERSATZ BEI DATENLECKS:
+- Rechtsgrundlage: Art. 82 DSGVO – Recht auf Schadensersatz bei Datenschutzverletzungen
+- Immaterieller Schaden (Kontrollverlust, Sorge, Belästigung) ist ersatzfähig
+- Betroffene können 500-5000€ Entschädigung erhalten
+- Kein Kostenrisiko bei helpcheck – Erfolgsabhängig
+
+3-SCHRITTE-PROZESS:
+1. PRÜFEN: Kostenlose E-Mail-Prüfung auf Datenlecks
+2. DOKUMENTIEREN: Beweise für Anspruch sichern
+3. ENTSCHÄDIGUNG: Schadensersatz durchsetzen
+
+═══ HELPCHECK SERVICE-MODELL ═══
+
+- Kostenlose Erstprüfung und Beratung
+- Kein Kostenrisiko: Zahlung NUR bei Erfolg
+- 50+ spezialisierte Partneranwälte deutschlandweit
+- Prüfung innerhalb von 24 Stunden
+- 95% Erfolgsquote im Verkehrsrecht
+
+═══ BERATUNGSABLAUF ═══
+
+1. Höre dem Nutzer zu und stelle gezielte Rückfragen
+2. Gib eine fundierte Ersteinschätzung basierend auf dem Wissen oben
+3. Erkläre die Erfolgschancen und nächsten Schritte
+4. Empfehle helpcheck zur kostenfreien Prüfung
+5. Leite zur Lead-Erfassung über
+
+STIL:
+- Professionell, empathisch, persönlich
+- Kurze, klare Sätze (max 3-4 Sätze pro Absatz)
+- Verwende Aufzählungen für Übersichtlichkeit
+- Gib konkrete Zahlen und Fakten an
+- Verweise NIEMALS auf ein Formular oder eine externe Seite
+- Mache dem Nutzer Mut: "Die Chancen stehen gut"
+
+═══ LEAD-ERFASSUNG (SEHR WICHTIG) ═══
+
+Wenn der Nutzer Hilfe möchte, detaillierte Prüfung anfragt oder eine Beratung will:
+1. Gib ZUERST die inhaltliche Beratung/Einschätzung
+2. Sage: "Damit wir Ihren Fall kostenlos prüfen können, benötige ich kurz ein paar Angaben."
+3. Frage nach dem NAMEN
+4. Dann nach der E-MAIL-ADRESSE
+5. Dann nach der TELEFONNUMMER (sage: "optional, für einen schnellen Rückruf")
+6. Wenn Name UND E-Mail vorhanden, bestätige mit EXAKT diesem Format:
+
+✅ **Vielen Dank, [Name]! Ihre Daten wurden erfasst.**
+---LEAD_DATA---
+Name: [Name]
+Email: [E-Mail]
+Telefon: [Telefonnummer oder "nicht angegeben"]
+Thema: [verkehrsrecht oder datenleck oder allgemein]
+---END_LEAD---
+Unser Team meldet sich schnellstmöglich bei Ihnen für Ihre kostenlose Erstberatung!
+
+WICHTIG: Frage die Daten IMMER einzeln und nacheinander ab. Schicke den ---LEAD_DATA--- Block NUR wenn du mindestens Name UND E-Mail hast.`;
+
+      const openRouterMessages = messages
+        .filter(m => m.content && !m.content.startsWith('📎'))
+        .map(m => ({
+          role: m.role === 'assistant' ? 'assistant' : 'user',
+          content: m.content
+        }));
+      openRouterMessages.push({ role: 'user', content: userMessage });
+
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'HelpCheck'
+        },
+        body: JSON.stringify({
+          model: 'openai/gpt-4o-mini',
+          messages: [
+            { role: 'system', content: systemInstruction },
+            ...openRouterMessages
+          ],
+          temperature: 0.7,
+          max_tokens: 800
+        })
       });
 
-      const aiText = response.text || 'Entschuldigung, ich konnte keine Antwort generieren.';
-      addMessage({ role: 'assistant', content: aiText, timestamp: new Date() });
+      const data = await response.json();
+      const aiText = data.choices?.[0]?.message?.content || 'Entschuldigung, ich konnte keine Antwort generieren.';
 
-      if (aiText.toLowerCase().includes('kontakt') || aiText.toLowerCase().includes('beratung')) {
-        setCurrentStep('lead');
+      // Try to parse structured lead data from AI response
+      const parsedLead = parseLeadFromResponse(aiText);
+      if (parsedLead) {
+        // AI lieferte strukturierten Block — nutze diese Daten
+        collectedLeadRef.current = { ...collectedLeadRef.current, ...parsedLead };
+      }
+
+      // Also check if AI response text contains an email (e.g. the user's email echoed back)
+      const emailInResponse = aiText.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+      if (emailInResponse && !collectedLeadRef.current.email) {
+        collectedLeadRef.current.email = emailInResponse[0];
+      }
+
+      // Strip lead markers from displayed message
+      const displayText = aiText.replace(/---\s*LEAD[_\s]DATA\s*---[\s\S]*?---\s*END[_\s]LEAD\s*---/gi, '').trim();
+      addMessage({ role: 'assistant', content: displayText, timestamp: new Date() });
+
+      // Determine topic from conversation
+      const allText = messages.map(m => m.content).join(' ') + ' ' + userMessage;
+      if (!collectedLeadRef.current.topic) {
+        collectedLeadRef.current.topic =
+          allText.toLowerCase().includes('verkehr') || allText.toLowerCase().includes('bußgeld') ? 'verkehrsrecht' :
+          allText.toLowerCase().includes('datenleck') || allText.toLowerCase().includes('dsgvo') ? 'datenleck' : 'allgemein';
+      }
+
+      // AUTO-SUBMIT: Wenn Name + Email vorhanden, Lead absenden
+      const lead = collectedLeadRef.current;
+      if (lead.name && lead.email && !leadSubmitted) {
+        console.log('[helpcheck] Submitting lead:', lead.name, lead.email);
+        try {
+          await submitLead({
+            email: lead.email,
+            name: lead.name,
+            phone: lead.phone || undefined,
+            topic: lead.topic || 'allgemein',
+            message: `Chat-Beratungsanfrage: ${lead.topic || 'allgemein'}`,
+            source: 'chatbot',
+            chat_history: JSON.stringify([...messages, { role: 'user', content: userMessage }, { role: 'assistant', content: displayText }]),
+          });
+          setLeadSubmitted(true);
+          setCurrentStep('done');
+          console.log('[helpcheck] Lead submitted successfully');
+        } catch (err) {
+          console.error('[helpcheck] Lead submission error:', err);
+        }
       }
 
     } catch (error) {
@@ -197,7 +419,7 @@ Erwähne bei jeder Gelegenheit die kostenlose Erstberatung.`;
     } finally {
       setIsLoading(false);
     }
-  }, [messages, addMessage, setCurrentStep, setIsDataLeakCheck]);
+  }, [messages, addMessage, setCurrentStep, setIsDataLeakCheck, isCollectingLeadData, leadSubmitted]);
 
   // Rate-Limit: Max 6 Nachrichten pro Minute
   const [messageTimestamps, setMessageTimestamps] = useState<number[]>([]);
@@ -243,10 +465,7 @@ Erwähne bei jeder Gelegenheit die kostenlose Erstberatung.`;
         handleSend('Ich möchte meine E-Mail-Adresse auf Datenleck prüfen. Datenleck');
         break;
       case 'beratung':
-        // Wechsle zum Lead-Formular
-        addMessage({ role: 'user', content: 'Ich möchte eine kostenlose Erstberatung.', timestamp: new Date() });
-        addMessage({ role: 'assistant', content: 'Gerne! Bitte füllen Sie das Formular aus, damit wir Ihnen eine kostenlose Erstberatung anbieten können.', timestamp: new Date() });
-        setCurrentStep('lead');
+        handleSend('Ich möchte eine kostenlose Erstberatung.');
         break;
     }
   };
