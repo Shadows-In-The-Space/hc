@@ -15,7 +15,7 @@ router.post('/check-email', async (req, res) => {
     // Check if we already have this result cached
     const cached = db.prepare(
       'SELECT * FROM email_checks WHERE email = ? AND datetime(checked_at) > datetime("now", "-1 day")'
-    ).get(email);
+    ).get(email) as { breach_count: number; breaches: string | null } | undefined;
 
     if (cached) {
       return res.json({

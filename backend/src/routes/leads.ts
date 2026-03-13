@@ -29,7 +29,8 @@ const leadSchema = z.object({
   phone: z.string().optional(),
   topic: z.string().optional(),
   message: z.string().optional(),
-  source: z.string().default('chatbot')
+  source: z.string().default('chatbot'),
+  chat_history: z.string().optional()
 });
 
 // Create or update lead
@@ -47,16 +48,17 @@ router.post('/leads', async (req, res) => {
             phone = COALESCE(?, phone),
             topic = COALESCE(?, topic),
             message = COALESCE(?, message),
+            chat_history = COALESCE(?, chat_history),
             updated_at = CURRENT_TIMESTAMP
         WHERE email = ?
       `);
-      stmt.run(data.name, data.phone, data.topic, data.message, data.email);
+      stmt.run(data.name, data.phone, data.topic, data.message, data.chat_history, data.email);
       res.json({ message: 'Lead updated', email: data.email });
     } else {
       // Create new lead
       const stmt = db.prepare(`
-        INSERT INTO leads (email, name, phone, topic, message, source)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO leads (email, name, phone, topic, message, source, chat_history)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
       `);
       const result = stmt.run(
         data.email,
@@ -64,7 +66,8 @@ router.post('/leads', async (req, res) => {
         data.phone || null,
         data.topic || null,
         data.message || null,
-        data.source
+        data.source,
+        data.chat_history || null
       );
       res.json({ message: 'Lead created', id: result.lastInsertRowid, email: data.email });
     }
@@ -107,6 +110,24 @@ router.patch('/leads/:id/status', requireAuth, (req, res) => {
     const stmt = db.prepare('UPDATE leads SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
     stmt.run(status, req.params.id);
     res.json({ message: 'Status updated' });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete lead (protected)
+router.delete('/leads/:id', requireAuth, (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (isNaN(id)) {
+      return res.status(400).json({ error: 'Invalid lead ID' });
+    }
+    const stmt = db.prepare('DELETE FROM leads WHERE id = ?');
+    const result = stmt.run(id);
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'Lead not found' });
+    }
+    res.json({ message: 'Lead deleted' });
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }

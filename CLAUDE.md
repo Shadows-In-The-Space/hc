@@ -1,53 +1,29 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Vollständige Workspace-Dokumentation: [.github/copilot-instructions.md](.github/copilot-instructions.md)
 
-## Project Structure
+## Kurzreferenz
 
-This is a **HelpCheck** demo project - a German legal information web application that helps users understand their rights in various legal situations (traffic law, data privacy, consumer rights).
+**HelpCheck** – Deutsche Legal-Tech-Webapp (Verkehrsrecht, Datenlecks, Verbraucherrecht).
 
-The main application is in **`hc-main`** which contains:
-- All pages: Home, Verkehrsrecht, AboutUs, Contact, DSGVO, Datenskandal, FacebookDatenleck, Fahrverbot, Geschwindigkeit, HandyAmSteuer, Ratgeber, Rotlichtverstoss
-- Custom components (ScrollReveal) and hooks (useCountUp)
-
-## Common Commands
+### Schnellstart
 
 ```bash
-# Install dependencies
-npm install
+# Frontend (hc-main/)
+cd hc-main && npm install && npm run dev    # Port 3000
 
-# Run development server (Vite on port 3000)
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
-
-# Lint TypeScript
-npm run lint
+# Backend (backend/)
+cd backend && npm install && npm run dev    # Port 3002
 ```
 
-## Environment Variables
+### Tech Stack
 
-Create `.env.local` from `.env.example`:
-- `GEMINI_API_KEY`: Required for Gemini AI API calls
-- `APP_URL`: Application URL for callbacks
+React 19 + TypeScript + Vite 6 | Tailwind CSS v4 (CSS-first) | motion/react | React Router v7 | Express + SQLite
 
-## Architecture
+### Wichtige Regeln
 
-- **Frontend**: React 19 + TypeScript + Vite
-- **Styling**: Tailwind CSS v4 with @tailwindcss/vite
-- **Animation**: Motion (framer-motion alternative)
-- **Routing**: React Router DOM
-- **Icons**: Lucide React
-- **AI**: Google Gemini API via @google/genai
-
-## Key Implementation Details
-
-- Uses Tailwind CSS v4 (CSS-first configuration, no tailwind.config.js)
-- React Router for page navigation
-- Components in `src/components/`, pages in `src/pages/`
-- Custom hooks in `src/hooks/`
-- Both hc-dev and hc-main have identical structure - hc-dev is the dev branch with more content
+- **Tailwind v4**: Konfiguration in `hc-main/src/index.css` unter `@theme`, KEIN `tailwind.config.js`
+- **Motion**: Import von `motion/react`, NICHT `framer-motion`
+- **Zwei Backends**: `backend/` (TS, primär) und `hc-main/server/` (JS, legacy) – nie gleichzeitig starten
+- **DB**: `data/helpcheck.db` – nie ohne Backup löschen
+- **Sprache**: Deutsch, beruflich-unterstützender Ton

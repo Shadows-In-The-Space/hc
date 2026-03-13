@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.env
+.env.local
+data/
+*.db
+hc-main/node_modules/
+hc-main/dist/
+backend/node_modules/
+backend/dist/
+hc-main/server/node_modules/
+hc-main/server/data/
+.git/

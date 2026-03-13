@@ -1,0 +1,30 @@
+services:
+  helpc:
+    image: helpcheck-demo:latest
+    container_name: helpc
+    restart: unless-stopped
+    volumes:
+      - helpc-data:/app/data
+    networks:
+      - app-network
+    labels:
+      - "traefik.enable=true"
+      # HTTP → HTTPS redirect
+      - "traefik.http.middlewares.helpc-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.helpc-http.rule=Host(`helpc.shadowsinthe.space`)"
+      - "traefik.http.routers.helpc-http.entrypoints=web"
+      - "traefik.http.routers.helpc-http.middlewares=helpc-redirect"
+      # HTTPS
+      - "traefik.http.routers.helpc-https.rule=Host(`helpc.shadowsinthe.space`)"
+      - "traefik.http.routers.helpc-https.entrypoints=websecure"
+      - "traefik.http.routers.helpc-https.tls=true"
+      - "traefik.http.routers.helpc-https.tls.certresolver=letsencrypt"
+      - "traefik.http.services.helpc.loadbalancer.server.port=80"
+
+volumes:
+  helpc-data:
+
+networks:
+  app-network:
+    external: true
+    name: agency-app_app-network
