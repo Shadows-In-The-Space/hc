@@ -206,14 +206,13 @@ const AppContent: React.FC = () => {
   );
 };
 
-// Demo Banner Component
+// Demo Banner Component - full width banner at top
 const DemoBanner = () => (
-  <div className="fixed top-0 right-0 z-[9999] pointer-events-none">
-    <div className="bg-gradient-to-r from-red-600 to-orange-500 text-white px-4 py-2 text-xs font-bold uppercase tracking-wider shadow-lg transform rotate-45 translate-x-8 translate-y-4 flex items-center gap-2">
-      <span>🚧</span> Demo
-    </div>
-    <div className="absolute top-0 right-0 bg-red-600 text-white px-3 py-1 text-xs font-bold uppercase tracking-wider shadow-lg -rotate-12 translate-x-2 -translate-y-1">
-      Vorführung
+  <div className="fixed top-0 left-0 right-0 z-[9999] pointer-events-none">
+    <div className="bg-gradient-to-r from-red-600 via-red-500 to-orange-500 py-3 shadow-2xl">
+      <div className="flex items-center justify-center">
+        <span className="text-white text-2xl md:text-4xl font-black uppercase tracking-[0.2em] drop-shadow-lg">🚧 DEMO VORFÜHRUNG 🚧</span>
+      </div>
     </div>
   </div>
 );
@@ -226,7 +225,9 @@ export default function App() {
       <Router>
         <GrainOverlay opacity={0.025} speed={10} />
         <DemoBanner />
-        <AppContent />
+        <div className="pt-[52px] md:pt-[60px]">
+          <AppContent />
+        </div>
       </Router>
     </ChatProvider>
   );
